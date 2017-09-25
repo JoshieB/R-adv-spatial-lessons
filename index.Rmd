@@ -10,6 +10,10 @@ github-repo: bbest/R-adv-spatial-lessons
 description: "These Data Carpentry lessons are for teaching simple usage of advanced spatial analysis libraries (sf, leaflet, ggmap and ggplot2)."
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, cache=T)
+```
+
 # Prerequisites {#prereq -}
 
 Lessons presented here are a continuation of the [Geospatial workshop using R of Data Carpentry](http://www.datacarpentry.org/lessons/#geospatial-data-workshop) described more specifically for the [Lawrence Berkeley National Lab: Sep 27-28, 2017](https://jsta.github.io/2017-09-27-LBNL/).

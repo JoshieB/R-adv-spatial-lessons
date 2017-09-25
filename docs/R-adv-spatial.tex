@@ -133,6 +133,20 @@
 }
 \makeatother
 
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[chapter]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[chapter]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
 
@@ -157,38 +171,45 @@ expediency, and meant to eventually be folded into the
 
 \chapter{Tidy Spatial Analysis}\label{tidy}
 
-Resources:
+\section{Overview}\label{overview}
+
+\textbf{Questions}
 
 \begin{itemize}
 \tightlist
 \item
-  \href{http://strimas.com/r/tidy-sf/}{Tidy spatial data in R: using
-  dplyr, tidyr, and ggplot2 with sf}
+  How to elegantly conduct complex spatial analysis by chaining
+  operations?
+\item
+  What is the percent area of water by region across the United States?
 \end{itemize}
 
-\section{Overview}\label{overview}
+\textbf{Objectives}
 
-\textbf{Questions} - How to elegantly conduct complex spatial analysis?
+\begin{itemize}
+\tightlist
+\item
+  Use the \texttt{\%\textgreater{}\%} operator (aka ``then'' or
+  ``pipe'') to pass output from one function into input of the next.
+\item
+  Calculate metrics on spatial attributes.
+\item
+  Aggregate spatial data with metrics.
+\item
+  Display a map of results.
+\end{itemize}
 
-\textbf{Objectives} - Use the \texttt{\%\textgreater{}\%} operator (aka
-``then'' or ``pipe'') to pass output from one function into input of the
-next. - Calculate metrics on spatial attributes. - Aggregate spatial
-data with metrics.
-
-\section{Things You'll Need to Complete this
-Tutorial}\label{things-youll-need-to-complete-this-tutorial}
+\section{Prerequisites}\label{prerequisites}
 
 \textbf{R Skill Level}: Intermediate - you've got basics of R down.
 
-You'll need \ldots{}
-
-We will use the \texttt{sf} package for vector data along with the
+You will use the \texttt{sf} package for vector data along with the
 \texttt{dplyr} package for calculating and manipulating attribute data.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# load packages}
-\KeywordTok{library}\NormalTok{(tidyverse)  }\CommentTok{# dplyr, tidyr, ggplot2}
+\KeywordTok{library}\NormalTok{(tidyverse)  }\CommentTok{# load dplyr, tidyr, ggplot2 packages}
 \KeywordTok{library}\NormalTok{(sf)         }\CommentTok{# vector reading & analysis}
 
 \CommentTok{# set working directory to data folder}
@@ -196,7 +217,7 @@ We will use the \texttt{sf} package for vector data along with the
 \end{Highlighting}
 \end{Shaded}
 
-\section{US States: Read and Plot}\label{us-states-read-and-plot}
+\section{States: read and plot}\label{states-read-and-plot}
 
 Similar to
 \href{https://jsta.github.io/R-spatial-raster-vector-lesson/09-vector-when-data-dont-line-up-crs/}{Lesson
@@ -208,6 +229,8 @@ polygon shapefile using the \texttt{sf} package. Then use the default
 \begin{Highlighting}[]
 \CommentTok{# read in states}
 \NormalTok{states <-}\StringTok{ }\KeywordTok{read_sf}\NormalTok{(}\StringTok{"data/NEON-DS-Site-Layout-Files/US-Boundary-Layers/US-State-Boundaries-Census-2014.shp"}\NormalTok{)}
+
+\CommentTok{# plot the states}
 \KeywordTok{plot}\NormalTok{(states)}
 \end{Highlighting}
 \end{Shaded}
@@ -217,11 +240,11 @@ polygon shapefile using the \texttt{sf} package. Then use the default
 ## plot all
 \end{verbatim}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-2-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/plot-states-1.pdf}
 
-You'll notice that the default plot on \texttt{sf} objects outputs
-colorized values of the first 9 of 10 columns. Use the suggestion from
-the warning to plot the 10th column.
+Notice the default plot on \texttt{sf} objects outputs colorized values
+of the first 9 of 10 columns. Use the suggestion from the warning to
+plot the 10th column.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -230,7 +253,7 @@ the warning to plot the 10th column.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/plot-states-10-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -333,14 +356,13 @@ To plot the column of interest, feed the ``slice'' of that column to the
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-4-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/plot-states-region-1.pdf}
 
 \textbf{Question}: To motivate the spatial analysis for the rest of this
-lesson, let's answer this question: ``\emph{\textbf{Show which regions
-have the highest ratio of water to land?}}''
+lesson, you will answer this question: ``\emph{\textbf{What is the
+percent water by region?}}''
 
-\section{Challenge: What analytical steps are required to answer the
-question?}\label{challenge-what-analytical-steps-are-required-to-answer-the-question}
+\section{Challenge: analytical steps?}\label{challenge-analytical-steps}
 
 Outline a sequence of analytical steps needed to arrive at the answer.
 
@@ -350,19 +372,45 @@ Outline a sequence of analytical steps needed to arrive at the answer.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Sum} the area of water and land per region.
+  \textbf{Sum} the area of water (\texttt{AWATER}) and land
+  (\texttt{ALAND}) per region.
 \item
-  \textbf{Divide} the area of water by the area of land per region to
-  arrive at density of water.
+  \textbf{Divide} the area of water (\texttt{AWATER}) by the area of
+  land (\texttt{ALAND}) per region to arrive at percent water.
 \item
-  Show \textbf{table} of regions sorted by density of water.
+  Show \textbf{table} of regions sorted by percent water.
 \item
-  Show \textbf{map} of regions by density of water with a color ramp and
+  Show \textbf{map} of regions by percent water with a color ramp and
   legend.
 \end{enumerate}
 
-\section{US States: Analyze
-Attributes}\label{us-states-analyze-attributes}
+\section{Regions: calculate \% water}\label{regions-calculate-water}
+
+\begin{itemize}
+\tightlist
+\item
+  Use the \texttt{\%\textgreater{}\%} operator (aka ``then'' or
+  ``pipe'') to pass output from one function into input of the next.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    In RStudio, see menu Help \textgreater{} Keyboard Shortcuts Help for
+    a shortcut to the ``Insert Pipe Operator''.
+  \end{itemize}
+\item
+  Calculate metrics on spatial attributes.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    In RStudio, see menu Help \textgreater{} Cheatsheets \textgreater{}
+    \href{https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/data-transformation-cheatsheet.pdf}{Data
+    Manipulation with dplyr, tidyr}.
+  \end{itemize}
+\item
+  Aggregate spatial data with metrics.
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -372,7 +420,7 @@ Attributes}\label{us-states-analyze-attributes}
     \DataTypeTok{water =} \KeywordTok{sum}\NormalTok{(AWATER),}
     \DataTypeTok{land  =} \KeywordTok{sum}\NormalTok{(ALAND)) %>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{water_land =} \NormalTok{water /}\StringTok{ }\NormalTok{land)}
+    \DataTypeTok{pct_water =} \NormalTok{water /}\StringTok{ }\NormalTok{land *}\StringTok{ }\DecValTok{100} \NormalTok{%>%}\StringTok{ }\KeywordTok{round}\NormalTok{(}\DecValTok{2}\NormalTok{))}
 
 \CommentTok{# object}
 \NormalTok{regions}
@@ -387,61 +435,94 @@ Attributes}\label{us-states-analyze-attributes}
 ## epsg (SRID):    4326
 ## proj4string:    +proj=longlat +datum=WGS84 +no_defs
 ## # A tibble: 5 x 5
-##      region        water         land water_land          geometry
-##       <chr>        <dbl>        <dbl>      <dbl>  <simple_feature>
-## 1   Midwest 184383393833 1.943869e+12 0.09485380 <MULTIPOLYGON...>
-## 2 Northeast 108922434345 8.690661e+11 0.12533273 <MULTIPOLYGON...>
-## 3 Southeast 103876652998 1.364632e+12 0.07612063 <MULTIPOLYGON...>
-## 4 Southwest  24217682268 1.462632e+12 0.01655761 <POLYGONZ((-9...>
-## 5      West  57568049509 2.432336e+12 0.02366780 <MULTIPOLYGON...>
+##      region        water         land pct_water          geometry
+##       <chr>        <dbl>        <dbl>     <dbl>  <simple_feature>
+## 1   Midwest 184383393833 1.943869e+12  9.485380 <MULTIPOLYGON...>
+## 2 Northeast 108922434345 8.690661e+11 12.533273 <MULTIPOLYGON...>
+## 3 Southeast 103876652998 1.364632e+12  7.612063 <MULTIPOLYGON...>
+## 4 Southwest  24217682268 1.462632e+12  1.655761 <POLYGONZ((-9...>
+## 5      West  57568049509 2.432336e+12  2.366780 <MULTIPOLYGON...>
 \end{verbatim}
+
+Notice the geometry in the column. To remove the geometry column pipe to
+\texttt{st\_set\_geometry(NULL)}. To arrange in descending order use
+\texttt{arrange(desc(pct\_water))}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# table}
 \NormalTok{regions %>%}
 \StringTok{  }\KeywordTok{st_set_geometry}\NormalTok{(}\OtherTok{NULL}\NormalTok{) %>%}
-\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(water_land))}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(pct_water))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 5 x 4
-##      region        water         land water_land
-##       <chr>        <dbl>        <dbl>      <dbl>
-## 1 Northeast 108922434345 8.690661e+11 0.12533273
-## 2   Midwest 184383393833 1.943869e+12 0.09485380
-## 3 Southeast 103876652998 1.364632e+12 0.07612063
-## 4      West  57568049509 2.432336e+12 0.02366780
-## 5 Southwest  24217682268 1.462632e+12 0.01655761
+##      region        water         land pct_water
+##       <chr>        <dbl>        <dbl>     <dbl>
+## 1 Northeast 108922434345 8.690661e+11 12.533273
+## 2   Midwest 184383393833 1.943869e+12  9.485380
+## 3 Southeast 103876652998 1.364632e+12  7.612063
+## 4      West  57568049509 2.432336e+12  2.366780
+## 5 Southwest  24217682268 1.462632e+12  1.655761
 \end{verbatim}
+
+\section{Regions: plot}\label{regions-plot}
+
+Now plot the regions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# plot, default}
-\KeywordTok{plot}\NormalTok{(regions[}\StringTok{'water_land'}\NormalTok{])}
+\KeywordTok{plot}\NormalTok{(regions[}\StringTok{'pct_water'}\NormalTok{])}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-5-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/plot-regions-pctwater-1.pdf}
+
+\section{Regions: ggplot}\label{regions-ggplot}
+
+The \texttt{ggplot2} library can
+\href{http://ggplot2.tidyverse.org/reference/ggsf.html}{visualise sf
+objects}.
+
+\begin{itemize}
+\tightlist
+\item
+  In RStudio, see menu Help \textgreater{} Cheatsheets \textgreater{}
+  \href{https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/ggplot2-cheatsheet-2.1.pdf}{Data
+  Visualization with ggplot2}.
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# plot, ggplot}
 \KeywordTok{ggplot}\NormalTok{(regions) +}
-\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \NormalTok{water_land)) +}
-\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"water_land"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \NormalTok{pct_water)) +}
+\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}
+    \StringTok{"pct_water"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{, }\DataTypeTok{direction=}\DecValTok{1}\NormalTok{,}
+    \DataTypeTok{guide =} \KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{title =} \StringTok{"% water"}\NormalTok{, }\DataTypeTok{reverse=}\NormalTok{T)) +}
 \StringTok{  }\KeywordTok{theme_bw}\NormalTok{() +}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Ratio of Water to Land for US Regions"}\NormalTok{)}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"% Water by US Region"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-5-2.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/ggplot-regions-pctwater-1.pdf}
 
-\section{US States: Recalculate Area}\label{us-states-recalculate-area}
+\section{Regions: recalculate area}\label{regions-recalculate-area}
 
-Because in geographic coordinates, need to either transform to
-projection and calculate area, or use geodesic calculations.
+So far you've used the \texttt{ALAND} column for area of the state. But
+what if you were not provided the area and needed to calculate it?
+Because the \texttt{states} are in geographic coordinates, you'll need
+to either transform to an equal area projection and calculate area, or
+use geodesic calculations. Thankfully, the \texttt{sf} library provides
+area calculations with the \texttt{st\_area()} and uses the
+\texttt{geosphere::distGeo()} to perform geodesic calculations (ie
+trigonometric calculation accounting for the spheroid nature of the
+earth). Since the \texttt{states} data has the unusual aspect of a z
+dimension, you'll need to first remove that with the \texttt{st\_zm()}
+function.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -457,18 +538,18 @@ projection and calculate area, or use geodesic calculations.
     \DataTypeTok{water_m2 =} \KeywordTok{sum}\NormalTok{(water_m2),}
     \DataTypeTok{land_m2  =} \KeywordTok{sum}\NormalTok{(land_m2)) %>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{water_land =} \NormalTok{water_m2 /}\StringTok{ }\NormalTok{land_m2)}
+    \DataTypeTok{pct_water =} \NormalTok{water_m2 /}\StringTok{ }\NormalTok{land_m2)}
 
 \CommentTok{# table}
 \NormalTok{regions %>%}
 \StringTok{  }\KeywordTok{st_set_geometry}\NormalTok{(}\OtherTok{NULL}\NormalTok{) %>%}
-\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(water_land))}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(pct_water))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 5 x 4
-##      region         water_m2          land_m2   water_land
+##      region         water_m2          land_m2    pct_water
 ##       <chr>          <units>          <units>      <units>
 ## 1 Northeast 108922434345 m^2 9.117041e+11 m^2 0.11947126 1
 ## 2   Midwest 184383393833 m^2 1.987268e+12 m^2 0.09278233 1
@@ -481,38 +562,27 @@ projection and calculate area, or use geodesic calculations.
 \begin{Highlighting}[]
 \CommentTok{# plot, ggplot}
 \KeywordTok{ggplot}\NormalTok{(regions) +}
-\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.numeric}\NormalTok{(water_land))) +}
-\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"water_land"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.numeric}\NormalTok{(pct_water))) +}
+\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}
+    \StringTok{"pct_water"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{, }\DataTypeTok{direction=}\DecValTok{1}\NormalTok{,}
+    \DataTypeTok{guide =} \KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{title =} \StringTok{"% water"}\NormalTok{, }\DataTypeTok{reverse=}\NormalTok{T)) +}
 \StringTok{  }\KeywordTok{theme_bw}\NormalTok{() +}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Ratio of Water to Land (geodesic) for US Regions "}\NormalTok{)}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"% Water by US Region"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/plot-regions-area-1.pdf}
 
-\section{Pipe Operator}\label{pipe-operator}
+\section{Challenge: project \& recalculate
+area}\label{challenge-project-recalculate-area}
 
-\begin{itemize}
-\tightlist
-\item
-  Help \textgreater{} Keyboard Shortcuts Help.
-\end{itemize}
-
-\section{Challenge: Project States and Calculate
-Area}\label{challenge-project-states-and-calculate-area}
-
-Use \texttt{st\_transform()}
+Use \texttt{st\_transform()} with a
 \href{http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/}{USA
-Contiguous Albers Equal Area Conic: ESRI Projection -- Spatial
-Reference}.
+Contiguous Albers Equal Area Conic Projection} that minimizes
+distoration, and then calculate area using the \texttt{st\_area()}
+function.
 
 \subsection{Answers}\label{answers-1}
-
-\begin{itemize}
-\tightlist
-\item
-  ESRI:102003
-\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -532,18 +602,18 @@ Reference}.
     \DataTypeTok{water_m2 =} \KeywordTok{sum}\NormalTok{(water_m2),}
     \DataTypeTok{land_m2  =} \KeywordTok{sum}\NormalTok{(land_m2)) %>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{water_land =} \NormalTok{water_m2 /}\StringTok{ }\NormalTok{land_m2)}
+    \DataTypeTok{pct_water =} \NormalTok{water_m2 /}\StringTok{ }\NormalTok{land_m2)}
 
 \CommentTok{# table}
 \NormalTok{regions %>%}
 \StringTok{  }\KeywordTok{st_set_geometry}\NormalTok{(}\OtherTok{NULL}\NormalTok{) %>%}
-\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(water_land))}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(pct_water))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## # A tibble: 5 x 4
-##      region         water_m2          land_m2   water_land
+##      region         water_m2          land_m2    pct_water
 ##       <chr>          <units>          <units>      <units>
 ## 1 Northeast 108922434345 m^2 9.117031e+11 m^2 0.11947138 1
 ## 2   Midwest 184383393833 m^2 1.987266e+12 m^2 0.09278246 1
@@ -556,67 +626,67 @@ Reference}.
 \begin{Highlighting}[]
 \CommentTok{# plot, ggplot}
 \KeywordTok{ggplot}\NormalTok{(regions) +}
-\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.numeric}\NormalTok{(water_land))) +}
-\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"water_land"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.numeric}\NormalTok{(pct_water))) +}
+\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"pct_water"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
 \StringTok{  }\KeywordTok{theme_bw}\NormalTok{() +}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Ratio of Water to Land (geodesic) for US Regions "}\NormalTok{)}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"% Water (geodesic) by US Region"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-7-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/recalc-regions-transform-1.pdf}
 
 \section{Key Points}\label{key-points}
 
 \begin{itemize}
 \tightlist
 \item
+  The \texttt{sf} package can take advantage of chaining spatial
+  operations using the \texttt{\%\textgreater{}\%} operator.
+\item
+  Data manipulation functions in \texttt{dplyr} such as
+  \texttt{group\_by()}, \texttt{summarize()} and \texttt{mutate()} work
+  on \texttt{sf} objects.
+\item
   Area can be calculated a variety of ways. Geodesic is preferred if
   starting with geographic coordinates (vs projected).
 \end{itemize}
 
-\section{Issues}\label{issues}
-
-\begin{itemize}
-\tightlist
-\item
-  \texttt{sf::st\_is\_valid()}
-\end{itemize}
-
 \chapter{Interactive Maps}\label{interactive}
-
-Resources:
-
-\begin{itemize}
-\tightlist
-\item
-  \href{http://remi-daigle.github.io/2016-04-15-UCSB/viz/}{Visualization
-  in R}
-\item
-  \href{http://rstudio.github.io/leaflet/}{Leaflet for R - Introduction}
-\item
-  \href{http://r-spatial.org/r/2017/01/30/mapedit_intro.html}{mapedit -
-  interactively edit spatial data in R}
-\item
-  \href{https://r-spatial.github.io/mapview/}{Interactive Viewing of
-  Spatial Objects in R • mapview}
-\end{itemize}
 
 \section{Overview}\label{overview-1}
 
-\textbf{Questions} - How do you generate interactive plots of spatial
-data?
+\textbf{Questions}
 
-\section{\texorpdfstring{\textbf{Objectives}}{Objectives}}\label{objectives}
+\begin{itemize}
+\tightlist
+\item
+  How do you generate interactive plots of spatial data to enable pan,
+  zoom and hover/click for more detail?
+\end{itemize}
+
+\textbf{Objectives}
+
+Learn variety of methods for producing interactive spatial output using
+libraries:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{plotly}: makes any ggplot2 object interactive
+\item
+  \texttt{mapview}: quick view of any spatial object
+\item
+  \texttt{leaflet}: full control over interactive map
+\end{itemize}
 
 \section{Things You'll Need to Complete this
-Tutorial}\label{things-youll-need-to-complete-this-tutorial-1}
+Tutorial}\label{things-youll-need-to-complete-this-tutorial}
 
 \textbf{R Skill Level}: Intermediate - you've got basics of R down.
 
-You'll need \ldots{}
-
 We will continue to use the \texttt{sf} and \texttt{raster} packages and
-introduce the \texttt{leaflet} package in this tutorial.
+introduce the \texttt{plotly}, \texttt{mapview}, and \texttt{leaflet}
+packages in this tutorial.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -624,7 +694,9 @@ introduce the \texttt{leaflet} package in this tutorial.
 \KeywordTok{library}\NormalTok{(tidyverse)  }\CommentTok{# loads dplyr, tidyr, ggplot2 packages}
 \KeywordTok{library}\NormalTok{(sf)         }\CommentTok{# simple features package - vector}
 \KeywordTok{library}\NormalTok{(raster)     }\CommentTok{# raster}
-\KeywordTok{library}\NormalTok{(leaflet)    }\CommentTok{# interactive}
+\KeywordTok{library}\NormalTok{(plotly)     }\CommentTok{# makes ggplot objects interactive}
+\KeywordTok{library}\NormalTok{(mapview)    }\CommentTok{# quick interactive viewing of spatial objects}
+\KeywordTok{library}\NormalTok{(leaflet)    }\CommentTok{# interactive maps}
 
 \CommentTok{# set working directory to data folder}
 \CommentTok{# setwd("pathToDirHere")}
@@ -633,26 +705,32 @@ introduce the \texttt{leaflet} package in this tutorial.
 
 \section{States: ggplot2}\label{states-ggplot2}
 
+Recreate the ggplot object from Lesson \ref{tidy} and save into a
+variable for subsequent use with the \texttt{plotly} package.
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# read in states}
 \NormalTok{states <-}\StringTok{ }\KeywordTok{read_sf}\NormalTok{(}\StringTok{"data/NEON-DS-Site-Layout-Files/US-Boundary-Layers/US-State-Boundaries-Census-2014.shp"}\NormalTok{) %>%}
 \StringTok{  }\KeywordTok{st_zm}\NormalTok{() %>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{water_km2 =} \NormalTok{(AWATER /}\StringTok{ }\NormalTok{(}\DecValTok{1000}\NormalTok{*}\DecValTok{1000}\NormalTok{)) %>%}\StringTok{ }\KeywordTok{round}\NormalTok{(}\DecValTok{1}\NormalTok{))}
+    \DataTypeTok{water_km2 =} \NormalTok{(AWATER /}\StringTok{ }\NormalTok{(}\DecValTok{1000}\NormalTok{*}\DecValTok{1000}\NormalTok{)) %>%}\StringTok{ }\KeywordTok{round}\NormalTok{(}\DecValTok{2}\NormalTok{))}
 
 \CommentTok{# plot, ggplot}
 \NormalTok{g =}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(states) +}
 \StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \NormalTok{water_km2)) +}
-\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"water_land"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Amount of Water by State"}\NormalTok{)}
+\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"water_km2"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Water (km2) by State"}\NormalTok{)}
 \NormalTok{g}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-ggplot2-1.pdf}
 
 \section{States: plotly}\label{states-plotly}
+
+The \texttt{plotly::ggplotly()} function outputs a ggplot into an
+interactive window capable of pan, zoom and identify.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -662,29 +740,39 @@ introduce the \texttt{leaflet} package in this tutorial.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-plotly-1.pdf}
 
 \section{States: mapview}\label{states-mapview}
+
+The \texttt{mapview::mapview()} function can work for a quick view of
+the data, providing choropleths, background maps and attribute popups.
+Performance varies on the object and customization can be tricky.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(mapview)}
 
+\CommentTok{# simple view with popups}
 \KeywordTok{mapview}\NormalTok{(states)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-12-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-mapview-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{mapview}\NormalTok{(states, }\DataTypeTok{zcol=}\StringTok{'water_km2'}\NormalTok{, }\DataTypeTok{burst=}\StringTok{'STUSPS'}\NormalTok{) }\CommentTok{# , burst = TRUE, hide = TRUE) # , burst=T)}
+\CommentTok{# coloring and layering}
+\KeywordTok{mapview}\NormalTok{(states, }\DataTypeTok{zcol=}\StringTok{'water_km2'}\NormalTok{, }\DataTypeTok{burst=}\StringTok{'STUSPS'}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-12-2.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-mapview-2.pdf}
 
 \section{States: leaflet}\label{states-leaflet}
+
+The \href{http://rstudio.github.io/leaflet/}{\texttt{leaflet}} package
+offers a robust set of functions for viewing vector and raster data,
+although requires more explicit functions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -696,16 +784,13 @@ introduce the \texttt{leaflet} package in this tutorial.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-13-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-leaflet-1.pdf}
 
 \subsection{Choropleth}\label{choropleth}
 
-\begin{itemize}
-\tightlist
-\item
-  \href{http://rstudio.github.io/leaflet/choropleths.html}{Leaflet for R
-  - Choropleths}
-\end{itemize}
+Drawing from the documentation from
+\href{http://rstudio.github.io/leaflet/choropleths.html}{Leaflet for R -
+Choropleths}, we can construct a pretty choropleth.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -733,9 +818,12 @@ introduce the \texttt{leaflet} package in this tutorial.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-14-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-choropleth-1.pdf}
 
 \subsection{Popups and Legend}\label{popups-and-legend}
+
+Adding a legend and popups requires a bit more work, but achieves a very
+aesthetically and functionally pleasing visualization.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -776,98 +864,113 @@ introduce the \texttt{leaflet} package in this tutorial.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{R-adv-spatial_files/figure-latex/states-popups-legend-1.pdf}
 
-\section{Pipe Operator}\label{pipe-operator-1}
+\section{Challenge: leaflet for
+regions}\label{challenge-leaflet-for-regions}
 
-\begin{itemize}
-\tightlist
-\item
-  Help \textgreater{} Keyboard Shortcuts Help.
-\end{itemize}
-
-\section{Challenge: Project States and Calculate
-Area}\label{challenge-project-states-and-calculate-area-1}
-
-Use \texttt{st\_transform()}
-\href{http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/}{USA
-Contiguous Albers Equal Area Conic: ESRI Projection -- Spatial
-Reference}.
+Use Lesson \ref{tidy} final output to create a regional choropleth with
+legend and popups for percent water by region.
 
 \subsection{Answers}\label{answers-2}
 
-\begin{itemize}
-\tightlist
-\item
-  ESRI:102003
-\end{itemize}
-
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(geosphere)}
-\KeywordTok{library}\NormalTok{(units)}
-
-\CommentTok{# Proj4 of http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/}
-\NormalTok{crs_usa =}\StringTok{ '+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'}
-
 \NormalTok{regions =}\StringTok{ }\NormalTok{states %>%}
-\StringTok{  }\KeywordTok{st_transform}\NormalTok{(crs_usa) %>%}
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{water_m2 =} \NormalTok{water_km2 %>%}\StringTok{ }\KeywordTok{set_units}\NormalTok{(m^}\DecValTok{2}\NormalTok{),}
-    \DataTypeTok{land_m2  =} \NormalTok{geometry %>%}\StringTok{ }\KeywordTok{st_zm}\NormalTok{() %>%}\StringTok{ }\KeywordTok{st_area}\NormalTok{()) %>%}
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(region) %>%}
 \StringTok{  }\KeywordTok{summarize}\NormalTok{(}
-    \DataTypeTok{water_m2 =} \KeywordTok{sum}\NormalTok{(water_m2),}
-    \DataTypeTok{land_m2  =} \KeywordTok{sum}\NormalTok{(land_m2)) %>%}
+    \DataTypeTok{water =} \KeywordTok{sum}\NormalTok{(AWATER),}
+    \DataTypeTok{land  =} \KeywordTok{sum}\NormalTok{(ALAND)) %>%}
 \StringTok{  }\KeywordTok{mutate}\NormalTok{(}
-    \DataTypeTok{water_land =} \NormalTok{water_m2 /}\StringTok{ }\NormalTok{land_m2)}
+    \DataTypeTok{pct_water =} \NormalTok{(water /}\StringTok{ }\NormalTok{land *}\StringTok{ }\DecValTok{100}\NormalTok{) %>%}\StringTok{ }\KeywordTok{round}\NormalTok{(}\DecValTok{2}\NormalTok{))}
 
-\CommentTok{# table}
-\NormalTok{regions %>%}
-\StringTok{  }\KeywordTok{st_set_geometry}\NormalTok{(}\OtherTok{NULL}\NormalTok{) %>%}
-\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(water_land))}
+\NormalTok{pal <-}\StringTok{ }\KeywordTok{colorBin}\NormalTok{(}\StringTok{"Spectral"}\NormalTok{, }\DataTypeTok{domain =} \NormalTok{regions$pct_water, }\DataTypeTok{bins =} \DecValTok{5}\NormalTok{)}
+
+\NormalTok{labels <-}\StringTok{ }\KeywordTok{sprintf}\NormalTok{(}
+  \StringTok{"<strong>%s</strong><br/>water: %s%%"}\NormalTok{,}
+  \NormalTok{regions$region, }\KeywordTok{comma}\NormalTok{(regions$pct_water)) %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{lapply}\NormalTok{(HTML)}
+
+\KeywordTok{leaflet}\NormalTok{(regions) %>%}
+\StringTok{  }\KeywordTok{addProviderTiles}\NormalTok{(}\StringTok{"Stamen.TonerLite"}\NormalTok{) %>%}
+\StringTok{  }\KeywordTok{addPolygons}\NormalTok{(}
+    \CommentTok{# fill}
+    \DataTypeTok{fillColor   =} \NormalTok{~}\KeywordTok{pal}\NormalTok{(pct_water),}
+    \DataTypeTok{fillOpacity =} \FloatTok{0.7}\NormalTok{,}
+    \CommentTok{# line}
+    \DataTypeTok{dashArray   =} \StringTok{"3"}\NormalTok{,}
+    \DataTypeTok{weight      =} \DecValTok{2}\NormalTok{,}
+    \DataTypeTok{color       =} \StringTok{"white"}\NormalTok{,}
+    \DataTypeTok{opacity     =} \DecValTok{1}\NormalTok{,}
+    \CommentTok{# interaction}
+    \DataTypeTok{highlight =} \KeywordTok{highlightOptions}\NormalTok{(}
+      \DataTypeTok{weight =} \DecValTok{5}\NormalTok{,}
+      \DataTypeTok{color =} \StringTok{"#666"}\NormalTok{,}
+      \DataTypeTok{dashArray =} \StringTok{""}\NormalTok{,}
+      \DataTypeTok{fillOpacity =} \FloatTok{0.7}\NormalTok{,}
+      \DataTypeTok{bringToFront =} \OtherTok{TRUE}\NormalTok{),}
+  \DataTypeTok{label =} \NormalTok{labels,}
+  \DataTypeTok{labelOptions =} \KeywordTok{labelOptions}\NormalTok{(}
+    \DataTypeTok{style =} \KeywordTok{list}\NormalTok{(}\StringTok{"font-weight"} \NormalTok{=}\StringTok{ "normal"}\NormalTok{, }\DataTypeTok{padding =} \StringTok{"3px 8px"}\NormalTok{),}
+    \DataTypeTok{textsize =} \StringTok{"15px"}\NormalTok{,}
+    \DataTypeTok{direction =} \StringTok{"auto"}\NormalTok{)) %>%}
+\StringTok{  }\KeywordTok{addLegend}\NormalTok{(}
+    \DataTypeTok{pal =} \NormalTok{pal, }\DataTypeTok{values =} \NormalTok{~pct_water, }\DataTypeTok{opacity =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{title =} \StringTok{"water %"}\NormalTok{,}
+    \DataTypeTok{position =} \StringTok{"bottomright"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{verbatim}
-## # A tibble: 5 x 4
-##      region     water_m2          land_m2     water_land
-##       <chr>      <units>          <units>        <units>
-## 1 Northeast 108922.9 m^2 9.117031e+11 m^2 1.194719e-07 1
-## 2   Midwest 184383.2 m^2 1.987266e+12 m^2 9.278237e-08 1
-## 3 Southeast 103876.6 m^2 1.427078e+12 m^2 7.278970e-08 1
-## 4      West  57568.0 m^2 2.467167e+12 m^2 2.333365e-08 1
-## 5 Southwest  24217.7 m^2 1.483758e+12 m^2 1.632186e-08 1
-\end{verbatim}
+\includegraphics{R-adv-spatial_files/figure-latex/regions-choropleth-1.pdf}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# plot, ggplot}
-\KeywordTok{ggplot}\NormalTok{(regions) +}
-\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.numeric}\NormalTok{(water_land))) +}
-\StringTok{  }\KeywordTok{scale_fill_distiller}\NormalTok{(}\StringTok{"water_land"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"Spectral"}\NormalTok{) +}
-\StringTok{  }\KeywordTok{theme_bw}\NormalTok{() +}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Ratio of Water to Land (geodesic) for US Regions "}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\section{Raster: leaflet}\label{raster-leaflet}
 
-\includegraphics{R-adv-spatial_files/figure-latex/unnamed-chunk-16-1.pdf}
+TODO: show raster overlay using NEON raster dataset example
 
 \section{Key Points}\label{key-points-1}
 
 \begin{itemize}
 \tightlist
 \item
-  Area can be calculated a variety of ways. Geodesic is preferred if
-  starting with geographic coordinates (vs projected).
+  Interactive maps provide more detail for visual investigation,
+  including use of background maps, but is only relevant in a web
+  context.
+\item
+  Several packages exist for providing interactive views of data.
+\item
+  The \texttt{plotly::ggplotly()} function works quickly if you already
+  have a ggplot object, which is best for static output.
+\item
+  The \texttt{mapview::mapview()} function can work for a quick view of
+  the data, providing choropleths, background maps and attribute popups.
+  Performance varies on the object and customization can be tricky.
+\item
+  The \texttt{leaflet} package provides a highly customizable set of
+  functions for rendering of interactive choropleths with background
+  maps, legends, etc.
 \end{itemize}
 
-\section{Issues}\label{issues-1}
+\textbf{Tidy Spatial Analysis}
 
 \begin{itemize}
 \tightlist
 \item
-  \texttt{sf::st\_is\_valid()}
+  \href{http://strimas.com/r/tidy-sf/}{Tidy spatial data in R: using
+  dplyr, tidyr, and ggplot2 with sf}
+\end{itemize}
+
+\textbf{Interactive Maps}
+
+\begin{itemize}
+\tightlist
+\item
+  \href{http://remi-daigle.github.io/2016-04-15-UCSB/viz/}{Visualization
+  in R - 2016-04-15-UCSB workshop}
+\item
+  \href{http://rstudio.github.io/leaflet/}{\texttt{leaflet}}
+\item
+  \href{http://r-spatial.org/r/2017/01/30/mapedit_intro.html}{\texttt{mapedit}}
+\item
+  \href{https://r-spatial.github.io/mapview/}{\texttt{mapview}}
 \end{itemize}
 
 

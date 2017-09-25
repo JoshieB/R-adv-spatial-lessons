@@ -1,49 +1,49 @@
 # Tidy Spatial Analysis {#tidy}
 
-Resources:
-
-- [Tidy spatial data in R: using dplyr, tidyr, and ggplot2 with sf](http://strimas.com/r/tidy-sf/)
-
 ## Overview {.objectives}
 
 **Questions**
-- How to elegantly conduct complex spatial analysis?
+
+- How to elegantly conduct complex spatial analysis by chaining operations?
+- What is the percent area of water by region across the United States?
 
 **Objectives**
+
 - Use the `%>%` operator (aka "then" or "pipe") to pass output from one function into input of the next.
 - Calculate metrics on spatial attributes.
 - Aggregate spatial data with metrics.
+- Display a map of results.
 
-## Things You'll Need to Complete this Tutorial {.prereq}
+## Prerequisites {.prereq}
 
 **R Skill Level**: Intermediate - you've got basics of R down.
 
-You'll need ...
+You will use the `sf` package for vector data along with the `dplyr` package for calculating and manipulating attribute data.
 
-We will use the `sf` package for vector data along with the `dplyr` package for calculating and manipulating attribute data.
-
-```{r , message=F, warning=F}
+```{r tidy-load-packages, message=F, warning=F}
 # load packages
-library(tidyverse)  # dplyr, tidyr, ggplot2
+library(tidyverse)  # load dplyr, tidyr, ggplot2 packages
 library(sf)         # vector reading & analysis
 
 # set working directory to data folder
 # setwd("pathToDirHere")
 ```
 
-## US States: Read and Plot
+## States: read and plot
 
 Similar to [Lesson 9: Handling Spatial Projection & CRS in R](https://jsta.github.io/R-spatial-raster-vector-lesson/09-vector-when-data-dont-line-up-crs/), we'll start by reading in a polygon shapefile using the `sf` package. Then use the default `plot()` function to see what it looks like.
 
-```{r}
+```{r plot-states}
 # read in states
 states <- read_sf("data/NEON-DS-Site-Layout-Files/US-Boundary-Layers/US-State-Boundaries-Census-2014.shp")
+
+# plot the states
 plot(states)
 ```
 
-You'll notice that the default plot on `sf` objects outputs colorized values of the first 9 of 10 columns. Use the suggestion from the warning to plot the 10th column.
+Notice the default plot on `sf` objects outputs colorized values of the first 9 of 10 columns. Use the suggestion from the warning to plot the 10th column.
 
-```{r}
+```{r plot-states-10}
 # plot 10th column
 plot(states, max.plot = 10)
 
@@ -66,58 +66,86 @@ The class of the `states` object is both a simple feature (`sf`) as well as a da
 
 To plot the column of interest, feed the "slice" of that column to the `plot()` function.
 
-```{r}
+```{r plot-states-region}
 plot(states['region'])
 ```
 
-**Question**: To motivate the spatial analysis for the rest of this lesson, let's answer this question: "_**Show which regions have the highest ratio of water to land?**_"
+**Question**: To motivate the spatial analysis for the rest of this lesson, you will answer this question: "_**What is the percent water by region?**_"
 
-## Challenge: What analytical steps are required to answer the question? {.challenge}
+## Challenge: analytical steps? {.challenge}
 
 Outline a sequence of analytical steps needed to arrive at the answer.
 
 ### Answers {.solution} 
 
-1. **Sum** the area of water and land per region.
-1. **Divide** the area of water by the area of land per region to arrive at density of water.
-1. Show **table** of regions sorted by density of water.
-1. Show **map** of regions by density of water with a color ramp and legend.
+1. **Sum** the area of water (`AWATER`) and land (`ALAND`) per region.
+1. **Divide** the area of water (`AWATER`) by the area of land  (`ALAND`) per region to arrive at percent water.
+1. Show **table** of regions sorted by percent water.
+1. Show **map** of regions by percent water with a color ramp and legend.
 
-## US States: Analyze Attributes
+## Regions: calculate % water
 
-```{r}
+- Use the `%>%` operator (aka "then" or "pipe") to pass output from one function into input of the next.
+    - In RStudio, see menu Help > Keyboard Shortcuts Help for a shortcut to the "Insert Pipe Operator".
+    
+- Calculate metrics on spatial attributes.
+    - In RStudio, see menu Help > Cheatsheets > [Data Manipulation with dplyr, tidyr](https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/data-transformation-cheatsheet.pdf).
+
+- Aggregate spatial data with metrics.
+
+```{r calc-regions}
 regions = states %>%
   group_by(region) %>%
   summarize(
     water = sum(AWATER),
     land  = sum(ALAND)) %>%
   mutate(
-    water_land = water / land)
+    pct_water = water / land * 100 %>% round(2))
 
 # object
 regions
+```
 
+Notice the geometry in the column. To remove the geometry column pipe to `st_set_geometry(NULL)`. To arrange in descending order use `arrange(desc(pct_water))`.
+
+```{r regions-table}
 # table
 regions %>%
   st_set_geometry(NULL) %>%
-  arrange(desc(water_land))
-
-# plot, default
-plot(regions['water_land'])
-
-# plot, ggplot
-ggplot(regions) +
-  geom_sf(aes(fill = water_land)) +
-  scale_fill_distiller("water_land", palette = "Spectral") +
-  theme_bw() +
-  ggtitle("Ratio of Water to Land for US Regions")
+  arrange(desc(pct_water))
 ```
 
-## US States: Recalculate Area
+## Regions: plot
 
-Because in geographic coordinates, need to either transform to projection and calculate area, or use geodesic calculations.
+Now plot the regions.
 
-```{r}
+```{r plot-regions-pctwater}
+# plot, default
+plot(regions['pct_water'])
+```
+
+## Regions: ggplot
+
+The `ggplot2` library can [visualise sf objects](http://ggplot2.tidyverse.org/reference/ggsf.html).
+
+- In RStudio, see menu Help > Cheatsheets > [Data Visualization with ggplot2](https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/ggplot2-cheatsheet-2.1.pdf).
+
+```{r ggplot-regions-pctwater}
+# plot, ggplot
+ggplot(regions) +
+  geom_sf(aes(fill = pct_water)) +
+  scale_fill_distiller(
+    "pct_water", palette = "Spectral", direction=1,
+    guide = guide_legend(title = "% water", reverse=T)) +
+  theme_bw() +
+  ggtitle("% Water by US Region")
+```
+
+## Regions: recalculate area
+
+So far you've used the `ALAND` column for area of the state. But what if you were not provided the area and needed to calculate it? Because the `states` are in geographic coordinates, you'll need to either transform to an equal area projection and calculate area, or use geodesic calculations. Thankfully, the `sf` library provides area calculations with the `st_area()` and uses the `geosphere::distGeo()` to perform geodesic calculations (ie trigonometric calculation accounting for the spheroid nature of the earth). Since the `states` data has the unusual aspect of a z dimension, you'll need to first remove that with the `st_zm()` function.
+
+```{r recalc-regions-area, warning=F, message=F}
 library(geosphere)
 library(units)
 
@@ -130,35 +158,32 @@ regions = states %>%
     water_m2 = sum(water_m2),
     land_m2  = sum(land_m2)) %>%
   mutate(
-    water_land = water_m2 / land_m2)
+    pct_water = water_m2 / land_m2)
 
 # table
 regions %>%
   st_set_geometry(NULL) %>%
-  arrange(desc(water_land))
-
-# plot, ggplot
-ggplot(regions) +
-  geom_sf(aes(fill = as.numeric(water_land))) +
-  scale_fill_distiller("water_land", palette = "Spectral") +
-  theme_bw() +
-  ggtitle("Ratio of Water to Land (geodesic) for US Regions ")
+  arrange(desc(pct_water))
 ```
 
-## Pipe Operator
+```{r plot-regions-area, warning=F, message=F}
+# plot, ggplot
+ggplot(regions) +
+  geom_sf(aes(fill = as.numeric(pct_water))) +
+  scale_fill_distiller(
+    "pct_water", palette = "Spectral", direction=1,
+    guide = guide_legend(title = "% water", reverse=T)) +
+  theme_bw() +
+  ggtitle("% Water by US Region")
+```
 
-- Help > Keyboard Shortcuts Help. 
+## Challenge: project & recalculate area {.challenge}
 
-
-## Challenge: Project States and Calculate Area {.challenge}
-
-Use `st_transform()` [USA Contiguous Albers Equal Area Conic: ESRI Projection -- Spatial Reference](http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/).
+Use `st_transform()` with a [USA Contiguous Albers Equal Area Conic Projection](http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/) that minimizes distoration, and then calculate area using the `st_area()` function.
 
 ### Answers {.solution} 
 
-- ESRI:102003
-
-```{r}
+```{r recalc-regions-transform}
 library(geosphere)
 library(units)
 
@@ -175,31 +200,23 @@ regions = states %>%
     water_m2 = sum(water_m2),
     land_m2  = sum(land_m2)) %>%
   mutate(
-    water_land = water_m2 / land_m2)
+    pct_water = water_m2 / land_m2)
 
 # table
 regions %>%
   st_set_geometry(NULL) %>%
-  arrange(desc(water_land))
+  arrange(desc(pct_water))
 
 # plot, ggplot
 ggplot(regions) +
-  geom_sf(aes(fill = as.numeric(water_land))) +
-  scale_fill_distiller("water_land", palette = "Spectral") +
+  geom_sf(aes(fill = as.numeric(pct_water))) +
+  scale_fill_distiller("pct_water", palette = "Spectral") +
   theme_bw() +
-  ggtitle("Ratio of Water to Land (geodesic) for US Regions ")
+  ggtitle("% Water (geodesic) by US Region")
 ```
 
 ## Key Points {.keypoints}
+
+- The `sf` package can take advantage of chaining spatial operations using the `%>%` operator.
+- Data manipulation functions in `dplyr` such as `group_by()`, `summarize()` and `mutate()` work on `sf` objects.
 - Area can be calculated a variety of ways. Geodesic is preferred if starting with geographic coordinates (vs projected).
-
-
-
-## Issues
-
-```{r}
-
-```
-
-- `sf::st_is_valid()`
-

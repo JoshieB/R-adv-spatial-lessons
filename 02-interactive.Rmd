@@ -1,35 +1,33 @@
 # Interactive Maps {#interactive}
 
-Resources:
-
-* [Visualization in R](http://remi-daigle.github.io/2016-04-15-UCSB/viz/)
-* [Leaflet for R - Introduction](http://rstudio.github.io/leaflet/)
-* [mapedit - interactively edit spatial data in R](http://r-spatial.org/r/2017/01/30/mapedit_intro.html)
-* [Interactive Viewing of Spatial Objects in R • mapview](https://r-spatial.github.io/mapview/)
-
 ## Overview {.objectives}
 
 **Questions**
-- How do you generate interactive plots of spatial data?
+
+- How do you generate interactive plots of spatial data to enable pan, zoom and hover/click for more detail?
 
 **Objectives**
-- 
 
+Learn variety of methods for producing interactive spatial output using libraries:
+
+- `plotly`: makes any ggplot2 object interactive
+- `mapview`: quick view of any spatial object
+- `leaflet`: full control over interactive map
 
 ## Things You'll Need to Complete this Tutorial {.prereq}
 
 **R Skill Level**: Intermediate - you've got basics of R down.
 
-You'll need ...
+We will continue to use the `sf` and `raster` packages and introduce the `plotly`, `mapview`, and `leaflet` packages in this tutorial.
 
-We will continue to use the `sf` and `raster` packages and introduce the `leaflet` package in this tutorial.
-
-```{r , message=F, warning=F}
+```{r interactive-load-packages, message=F, warning=F}
 # load packages
 library(tidyverse)  # loads dplyr, tidyr, ggplot2 packages
 library(sf)         # simple features package - vector
 library(raster)     # raster
-library(leaflet)    # interactive
+library(plotly)     # makes ggplot objects interactive
+library(mapview)    # quick interactive viewing of spatial objects
+library(leaflet)    # interactive maps
 
 # set working directory to data folder
 # setwd("pathToDirHere")
@@ -37,24 +35,28 @@ library(leaflet)    # interactive
 
 ## States: ggplot2
 
-```{r}
+Recreate the ggplot object from Lesson \@ref(tidy) and save into a variable for subsequent use with the `plotly` package.
+
+```{r states-ggplot2}
 # read in states
 states <- read_sf("data/NEON-DS-Site-Layout-Files/US-Boundary-Layers/US-State-Boundaries-Census-2014.shp") %>%
   st_zm() %>%
   mutate(
-    water_km2 = (AWATER / (1000*1000)) %>% round(1))
+    water_km2 = (AWATER / (1000*1000)) %>% round(2))
 
 # plot, ggplot
 g = ggplot(states) +
   geom_sf(aes(fill = water_km2)) +
-  scale_fill_distiller("water_land", palette = "Spectral") +
-  ggtitle("Amount of Water by State")
+  scale_fill_distiller("water_km2", palette = "Spectral") +
+  ggtitle("Water (km2) by State")
 g
 ```
 
 ## States: plotly
 
-```{r, warning=F, message=F}
+The `plotly::ggplotly()` function outputs a ggplot into an interactive window capable of pan, zoom and identify.
+
+```{r states-plotly, warning=F, message=F}
 library(plotly)
 
 ggplotly(g)
@@ -62,17 +64,24 @@ ggplotly(g)
 
 ## States: mapview
 
-```{r, warning=F, message=F}
+The `mapview::mapview()` function can work for a quick view of the data, providing choropleths, background maps and attribute popups. Performance varies on the object and customization can be tricky.
+
+```{r states-mapview, warning=F, message=F}
 library(mapview)
 
+# simple view with popups
 mapview(states)
-mapview(states, zcol='water_km2', burst='STUSPS') # , burst = TRUE, hide = TRUE) # , burst=T)
+
+# coloring and layering
+mapview(states, zcol='water_km2', burst='STUSPS')
 ```
 
 
 ## States: leaflet
 
-```{r}
+The [`leaflet`](http://rstudio.github.io/leaflet/) package offers a robust set of functions for viewing vector and raster data, although requires more explicit functions.
+
+```{r states-leaflet}
 library(leaflet)
 
 leaflet(states) %>%
@@ -83,9 +92,9 @@ leaflet(states) %>%
 
 ### Choropleth
 
-- [Leaflet for R - Choropleths](http://rstudio.github.io/leaflet/choropleths.html)
+Drawing from the documentation from [Leaflet for R - Choropleths](http://rstudio.github.io/leaflet/choropleths.html), we can construct a pretty choropleth.
 
-```{r}
+```{r states-choropleth}
 pal <- colorBin("Blues", domain = states$water_km2, bins = 7)
 
 
@@ -111,7 +120,9 @@ leaflet(states) %>%
 
 ### Popups and Legend
 
-```{r, warning=F, message=F}
+Adding a legend and popups requires a bit more work, but achieves a very aesthetically and functionally pleasing visualization.
+
+```{r states-popups-legend, warning=F, message=F}
 library(htmltools)
 library(scales)
 
@@ -148,61 +159,66 @@ leaflet(states) %>%
     position = "bottomright")
 ```
 
-## Pipe Operator
+## Challenge: leaflet for regions {.challenge}
 
-- Help > Keyboard Shortcuts Help. 
-
-
-## Challenge: Project States and Calculate Area {.challenge}
-
-Use `st_transform()` [USA Contiguous Albers Equal Area Conic: ESRI Projection -- Spatial Reference](http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/).
+Use Lesson \@ref(tidy) final output to create a regional choropleth with legend and popups for percent water by region.
 
 ### Answers {.solution} 
 
-- ESRI:102003
-
-```{r}
-library(geosphere)
-library(units)
-
-# Proj4 of http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/
-crs_usa = '+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'
-
+```{r regions-choropleth}
 regions = states %>%
-  st_transform(crs_usa) %>%
-  mutate(
-    water_m2 = water_km2 %>% set_units(m^2),
-    land_m2  = geometry %>% st_zm() %>% st_area()) %>%
   group_by(region) %>%
   summarize(
-    water_m2 = sum(water_m2),
-    land_m2  = sum(land_m2)) %>%
+    water = sum(AWATER),
+    land  = sum(ALAND)) %>%
   mutate(
-    water_land = water_m2 / land_m2)
+    pct_water = (water / land * 100) %>% round(2))
 
-# table
-regions %>%
-  st_set_geometry(NULL) %>%
-  arrange(desc(water_land))
+pal <- colorBin("Spectral", domain = regions$pct_water, bins = 5)
 
-# plot, ggplot
-ggplot(regions) +
-  geom_sf(aes(fill = as.numeric(water_land))) +
-  scale_fill_distiller("water_land", palette = "Spectral") +
-  theme_bw() +
-  ggtitle("Ratio of Water to Land (geodesic) for US Regions ")
+labels <- sprintf(
+  "<strong>%s</strong><br/>water: %s%%",
+  regions$region, comma(regions$pct_water)) %>% 
+  lapply(HTML)
+
+leaflet(regions) %>%
+  addProviderTiles("Stamen.TonerLite") %>%
+  addPolygons(
+    # fill
+    fillColor   = ~pal(pct_water),
+    fillOpacity = 0.7,
+    # line
+    dashArray   = "3",
+    weight      = 2,
+    color       = "white",
+    opacity     = 1,
+    # interaction
+    highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+  label = labels,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto")) %>%
+  addLegend(
+    pal = pal, values = ~pct_water, opacity = 0.7, title = "water %",
+    position = "bottomright")
 ```
+
+## Raster: leaflet
+
+TODO: show raster overlay using NEON raster dataset example
 
 ## Key Points {.keypoints}
-- Area can be calculated a variety of ways. Geodesic is preferred if starting with geographic coordinates (vs projected).
 
+- Interactive maps provide more detail for visual investigation, including use of background maps, but is only relevant in a web context.
+- Several packages exist for providing interactive views of data.
+- The `plotly::ggplotly()` function works quickly if you already have a ggplot object, which is best for static output.
+- The `mapview::mapview()` function can work for a quick view of the data, providing choropleths, background maps and attribute popups. Performance varies on the object and customization can be tricky.
+- The `leaflet` package provides a highly customizable set of functions for rendering of interactive choropleths with background maps, legends, etc.
 
-
-## Issues
-
-```{r}
-
-```
-
-- `sf::st_is_valid()`
 
