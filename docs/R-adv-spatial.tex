@@ -1,0 +1,259 @@
+\documentclass[]{book}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Advanced Spatial Lessons},
+            pdfauthor={Ben Best},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{R Advanced Spatial Lessons}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Ben Best}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{2017-09-24}
+
+\usepackage{booktabs}
+\usepackage{amsthm}
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=8pt plus 2pt minus 4pt
+  \thm@postskip=\thm@preskip
+}
+\makeatother
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[chapter]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[chapter]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\chapter*{Prerequisites}\label{prereq}
+\addcontentsline{toc}{chapter}{Prerequisites}
+
+Lessons presented here are a continuation of the
+\href{http://www.datacarpentry.org/lessons/\#geospatial-data-workshop}{Geospatial
+workshop using R of Data Carpentry} described more specifically for the
+\href{https://jsta.github.io/2017-09-27-LBNL/}{Lawrence Berkeley
+National Lab: Sep 27-28, 2017}.
+
+This content is setup for now using
+\href{http://bookdown.org/yihui/bookdown}{bookdown} (using the
+\href{https://github.com/rstudio/bookdown-demo}{bookdown-demo}) for
+expediency, and meant to eventually be folded into the
+\href{https://github.com/swcarpentry/styles}{Software Carpentry style}.
+
+\chapter{Tidy Spatial Analysis}\label{tidy}
+
+Resources:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{http://strimas.com/r/tidy-sf/}{Tidy spatial data in R: using
+  dplyr, tidyr, and ggplot2 with sf}
+\end{itemize}
+
+\section{Overview}\label{overview}
+
+\textbf{Questions} - How to elegantly conduct complex spatial analysis?
+
+\textbf{Objectives} - Understand how to use the ``then'' operator
+\texttt{\%\textgreater{}\%} to pass output from one function into input
+of the next. - Perform
+
+\section{Things You'll Need to Complete this
+Tutorial}\label{things-youll-need-to-complete-this-tutorial}
+
+\textbf{R Skill Level}: Intermediate - you've got basics of R down.
+
+You'll need \ldots{}
+
+\section{Challenge: Explore Raster
+Metadata}\label{challenge-explore-raster-metadata}
+
+Without using the \texttt{raster} function to read the file into
+\texttt{R}, determine the following about the
+\texttt{NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV\_DSMhill.tif}
+file:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Does this file has the same \texttt{CRS} as \texttt{DSM\_HARV}?
+\item
+  What is the \texttt{NoDataValue}?
+\item
+  What is resolution of the raster data?
+\item
+  How large would a 5x5 pixel area would be on the Earth's surface?
+\item
+  Is the file a multi- or single-band raster?
+\end{enumerate}
+
+Notice: this file is a \texttt{hillshade}. We will learn about
+hillshades in Work with Multi-band Rasters: Images in R.
+
+\subsection{Answers}\label{answers}
+
+\begin{verbatim}
+rows        1367 
+columns     1697 
+bands       1 
+lower left origin.x        731453 
+lower left origin.y        4712471 
+res.x       1 
+res.y       1 
+ysign       -1 
+oblique.x   0 
+oblique.y   0 
+driver      GTiff 
+projection  +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs 
+file        data/NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif 
+apparent band summary:
+   GDType hasNoDataValue NoDataValue blockSize1 blockSize2
+1 Float64           TRUE       -9999          1       1697
+apparent band statistics:
+        Bmin      Bmax     Bmean       Bsd
+1 -0.7136298 0.9999997 0.3125525 0.4812939
+Metadata:
+AREA_OR_POINT=Area 
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  If this file has the same CRS as DSM\_HARV? Yes: UTM Zone 18, WGS84,
+  meters.
+\item
+  What format \texttt{NoDataValues} take? -9999
+\item
+  The resolution of the raster data? 1x1
+\item
+  How large a 5x5 pixel area would be? 5mx5m How? We are given
+  resolution of 1x1 and units in meters, therefore resolution of 5x5
+  means 5x5m.
+\item
+  Is the file a multi- or single-band raster? Single.
+\end{enumerate}
+
+\section{Key Points}\label{key-points}
+
+\begin{itemize}
+\tightlist
+\item
+  The Coordinate Reference System or CRS tells R where the raster is
+  located in geographic space and what method should be used to
+  ``flatten'' or project the raster.
+\end{itemize}
+
+\chapter{Literature}\label{literature}
+
+Here is a review of existing methods.
+
+\chapter{Methods}\label{methods}
+
+We describe our methods in this chapter.
+
+\chapter{Applications}\label{applications}
+
+Some \emph{significant} applications are demonstrated in this chapter.
+
+\section{Example one}\label{example-one}
+
+\section{Example two}\label{example-two}
+
+\chapter{Final Words}\label{final-words}
+
+We have finished a nice book.
+
+
+\end{document}

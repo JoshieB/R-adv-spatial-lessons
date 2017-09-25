@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="final-words.html">
-
+<link rel="prev" href="index.html">
+<link rel="next" href="literature.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -105,9 +105,72 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<div id="tidy" class="section level1">
+<h1><span class="header-section-number">Lesson 1</span> Tidy Spatial Analysis</h1>
+<p>Resources:</p>
+<ul>
+<li><a href="http://strimas.com/r/tidy-sf/">Tidy spatial data in R: using dplyr, tidyr, and ggplot2 with sf</a></li>
+</ul>
+<div id="overview" class="section level2 objectives">
+<h2><span class="header-section-number">1.1</span> Overview</h2>
+<p><strong>Questions</strong> - How to elegantly conduct complex spatial analysis?</p>
+<p><strong>Objectives</strong> - Understand how to use the “then” operator <code>%&gt;%</code> to pass output from one function into input of the next. - Perform</p>
+</div>
+<div id="things-youll-need-to-complete-this-tutorial" class="section level2 prereq">
+<h2><span class="header-section-number">1.2</span> Things You’ll Need to Complete this Tutorial</h2>
+<p><strong>R Skill Level</strong>: Intermediate - you’ve got basics of R down.</p>
+<p>You’ll need …</p>
+</div>
+<div id="challenge-explore-raster-metadata" class="section level2 challenge">
+<h2><span class="header-section-number">1.3</span> Challenge: Explore Raster Metadata</h2>
+<p>Without using the <code>raster</code> function to read the file into <code>R</code>, determine the following about the <code>NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif</code> file:</p>
+<ol style="list-style-type: decimal">
+<li>Does this file has the same <code>CRS</code> as <code>DSM_HARV</code>?</li>
+<li>What is the <code>NoDataValue</code>?</li>
+<li>What is resolution of the raster data?</li>
+<li>How large would a 5x5 pixel area would be on the Earth’s surface?</li>
+<li>Is the file a multi- or single-band raster?</li>
+</ol>
+<p>Notice: this file is a <code>hillshade</code>. We will learn about hillshades in <a href="{{ site.baseurl }}/R/Multi-Band-Rasters-In-R/" target="_blank"> Work with Multi-band Rasters: Images in R</a>.</p>
+<div id="answers" class="section level3 solution">
+<h3><span class="header-section-number">1.3.1</span> Answers</h3>
+<pre><code>rows        1367 
+columns     1697 
+bands       1 
+lower left origin.x        731453 
+lower left origin.y        4712471 
+res.x       1 
+res.y       1 
+ysign       -1 
+oblique.x   0 
+oblique.y   0 
+driver      GTiff 
+projection  +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs 
+file        data/NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif 
+apparent band summary:
+   GDType hasNoDataValue NoDataValue blockSize1 blockSize2
+1 Float64           TRUE       -9999          1       1697
+apparent band statistics:
+        Bmin      Bmax     Bmean       Bsd
+1 -0.7136298 0.9999997 0.3125525 0.4812939
+Metadata:
+AREA_OR_POINT=Area </code></pre>
+<ol style="list-style-type: decimal">
+<li>If this file has the same CRS as DSM_HARV? Yes: UTM Zone 18, WGS84, meters.</li>
+<li>What format <code>NoDataValues</code> take? -9999</li>
+<li>The resolution of the raster data? 1x1</li>
+<li>How large a 5x5 pixel area would be? 5mx5m How? We are given resolution of 1x1 and units in meters, therefore resolution of 5x5 means 5x5m.</li>
+<li>Is the file a multi- or single-band raster? Single.</li>
+</ol>
+</div>
+</div>
+<div id="key-points" class="section level2 keypoints">
+<h2><span class="header-section-number">1.4</span> Key Points</h2>
+<ul>
+<li>The Coordinate Reference System or CRS tells R where the raster is located in geographic space and what method should be used to “flatten” or project the raster.</li>
+</ul>
 
+</div>
 </div>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -117,8 +180,8 @@
           </div>
         </div>
       </div>
-<a href="final-words.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="literature.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -147,7 +210,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/bbest/R-adv-spatial-lessons/edit/master/06-references.Rmd",
+"link": "https://github.com/bbest/R-adv-spatial-lessons/edit/master/01-tidy.Rmd",
 "text": "Edit"
 },
 "download": ["R-adv-spatial.pdf"],

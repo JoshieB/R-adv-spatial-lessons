@@ -1,0 +1,81 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# Tidy Spatial Analysis {#tidy}
+
+Resources:
+
+- [Tidy spatial data in R: using dplyr, tidyr, and ggplot2 with sf](http://strimas.com/r/tidy-sf/)
+
+## Overview {.objectives}
+
+**Questions**
+- How to elegantly conduct complex spatial analysis?
+
+**Objectives**
+- Understand how to use the "then" operator `%>%` to pass output from one function into input of the next.
+- Perform 
+
+
+## Things You'll Need to Complete this Tutorial {.prereq}
+
+**R Skill Level**: Intermediate - you've got basics of R down.
+
+You'll need ...
+
+
+## Challenge: Explore Raster Metadata {.challenge}
+
+Without using the `raster` function to read the file into `R`, determine the following about the  `NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif` file:
+ 
+1. Does this file has the same `CRS` as `DSM_HARV`?
+2. What is the `NoDataValue`?
+3. What is resolution of the raster data?
+4. How large would a 5x5 pixel area would be on the Earth's surface?
+5. Is the file a multi- or single-band raster?
+
+Notice: this file is a `hillshade`. We will learn about hillshades in
+<a href="{{ site.baseurl }}/R/Multi-Band-Rasters-In-R/" target="_blank">  Work with Multi-band Rasters: Images in R</a>.
+
+### Answers {.solution} 
+
+```
+rows        1367 
+columns     1697 
+bands       1 
+lower left origin.x        731453 
+lower left origin.y        4712471 
+res.x       1 
+res.y       1 
+ysign       -1 
+oblique.x   0 
+oblique.y   0 
+driver      GTiff 
+projection  +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs 
+file        data/NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif 
+apparent band summary:
+   GDType hasNoDataValue NoDataValue blockSize1 blockSize2
+1 Float64           TRUE       -9999          1       1697
+apparent band statistics:
+        Bmin      Bmax     Bmean       Bsd
+1 -0.7136298 0.9999997 0.3125525 0.4812939
+Metadata:
+AREA_OR_POINT=Area 
+```
+
+1. If this file has the same CRS as DSM_HARV?  Yes: UTM Zone 18, WGS84, meters.
+2. What format `NoDataValues` take?  -9999
+3. The resolution of the raster data? 1x1
+4. How large a 5x5 pixel area would be? 5mx5m How? We are given resolution of 1x1 and units in meters, therefore resolution of 5x5 means 5x5m.
+5. Is the file a multi- or single-band raster?  Single.
+
+## Key Points {.keypoints}
+
+- The Coordinate Reference System or CRS tells R where the raster is located in geographic space and what method should be used to “flatten” or project the raster.
+
+
+
+
+
