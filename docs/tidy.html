@@ -33,7 +33,7 @@
   
   
 <link rel="prev" href="index.html">
-<link rel="next" href="literature.html">
+<link rel="next" href="interactive.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -47,8 +47,65 @@
 
 
 
+<script src="libs/htmlwidgets-0.9/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.7.1/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<link href="libs/plotlyjs-1.29.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotlyjs-1.29.2/plotly-latest.min.js"></script>
+<link href="libs/leaflet-0.7.7/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-0.7.7/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<link href="libs/leaflet-label-0.2.2/leaflet.label.css" rel="stylesheet" />
+<script src="libs/leaflet-label-0.2.2/leaflet.label.js"></script>
+<script src="libs/Proj4Leaflet-0.7.2/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-0.7.2/proj4leaflet.js"></script>
+<script src="libs/leaflet-binding-1.1.0.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.0.27/leaflet-providers.js"></script>
+<script src="libs/leaflet-providers-plugin-1.1.0.9000/leaflet-providers-plugin.js"></script>
+<link href="libs/HomeButton-0.0.1/home-button.css" rel="stylesheet" />
+<script src="libs/HomeButton-0.0.1/home-button.js"></script>
+<script src="libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
 
 
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
 
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
 <link rel="stylesheet" href="css/style.css" type="text/css" />
@@ -72,21 +129,40 @@
 <li class="chapter" data-level="1" data-path="tidy.html"><a href="tidy.html"><i class="fa fa-check"></i><b>1</b> Tidy Spatial Analysis</a><ul>
 <li class="chapter" data-level="1.1" data-path="tidy.html"><a href="tidy.html#overview"><i class="fa fa-check"></i><b>1.1</b> Overview</a></li>
 <li class="chapter" data-level="1.2" data-path="tidy.html"><a href="tidy.html#things-youll-need-to-complete-this-tutorial"><i class="fa fa-check"></i><b>1.2</b> Things You’ll Need to Complete this Tutorial</a></li>
-<li class="chapter" data-level="1.3" data-path="tidy.html"><a href="tidy.html#challenge-explore-raster-metadata"><i class="fa fa-check"></i><b>1.3</b> Challenge: Explore Raster Metadata</a><ul>
-<li class="chapter" data-level="1.3.1" data-path="tidy.html"><a href="tidy.html#answers"><i class="fa fa-check"></i><b>1.3.1</b> Answers</a></li>
+<li class="chapter" data-level="1.3" data-path="tidy.html"><a href="tidy.html#us-states-read-and-plot"><i class="fa fa-check"></i><b>1.3</b> US States: Read and Plot</a></li>
+<li class="chapter" data-level="1.4" data-path="tidy.html"><a href="tidy.html#challenge-what-analytical-steps-are-required-to-answer-the-question"><i class="fa fa-check"></i><b>1.4</b> Challenge: What analytical steps are required to answer the question?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="tidy.html"><a href="tidy.html#answers"><i class="fa fa-check"></i><b>1.4.1</b> Answers</a></li>
 </ul></li>
-<li class="chapter" data-level="1.4" data-path="tidy.html"><a href="tidy.html#key-points"><i class="fa fa-check"></i><b>1.4</b> Key Points</a></li>
+<li class="chapter" data-level="1.5" data-path="tidy.html"><a href="tidy.html#us-states-analyze-attributes"><i class="fa fa-check"></i><b>1.5</b> US States: Analyze Attributes</a></li>
+<li class="chapter" data-level="1.6" data-path="tidy.html"><a href="tidy.html#us-states-recalculate-area"><i class="fa fa-check"></i><b>1.6</b> US States: Recalculate Area</a></li>
+<li class="chapter" data-level="1.7" data-path="tidy.html"><a href="tidy.html#pipe-operator"><i class="fa fa-check"></i><b>1.7</b> Pipe Operator</a></li>
+<li class="chapter" data-level="1.8" data-path="tidy.html"><a href="tidy.html#challenge-project-states-and-calculate-area"><i class="fa fa-check"></i><b>1.8</b> Challenge: Project States and Calculate Area</a><ul>
+<li class="chapter" data-level="1.8.1" data-path="tidy.html"><a href="tidy.html#answers-1"><i class="fa fa-check"></i><b>1.8.1</b> Answers</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>2</b> Literature</a></li>
-<li class="chapter" data-level="3" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>3</b> Methods</a></li>
-<li class="chapter" data-level="4" data-path="applications.html"><a href="applications.html"><i class="fa fa-check"></i><b>4</b> Applications</a><ul>
-<li class="chapter" data-level="4.1" data-path="applications.html"><a href="applications.html#example-one"><i class="fa fa-check"></i><b>4.1</b> Example one</a></li>
-<li class="chapter" data-level="4.2" data-path="applications.html"><a href="applications.html#example-two"><i class="fa fa-check"></i><b>4.2</b> Example two</a></li>
+<li class="chapter" data-level="1.9" data-path="tidy.html"><a href="tidy.html#key-points"><i class="fa fa-check"></i><b>1.9</b> Key Points</a></li>
+<li class="chapter" data-level="1.10" data-path="tidy.html"><a href="tidy.html#issues"><i class="fa fa-check"></i><b>1.10</b> Issues</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>5</b> Final Words</a></li>
+<li class="chapter" data-level="2" data-path="interactive.html"><a href="interactive.html"><i class="fa fa-check"></i><b>2</b> Interactive Maps</a><ul>
+<li class="chapter" data-level="2.1" data-path="interactive.html"><a href="interactive.html#overview-1"><i class="fa fa-check"></i><b>2.1</b> Overview</a></li>
+<li class="chapter" data-level="2.2" data-path="interactive.html"><a href="interactive.html#objectives"><i class="fa fa-check"></i><b>2.2</b> <strong>Objectives</strong></a></li>
+<li class="chapter" data-level="2.3" data-path="interactive.html"><a href="interactive.html#things-youll-need-to-complete-this-tutorial-1"><i class="fa fa-check"></i><b>2.3</b> Things You’ll Need to Complete this Tutorial</a></li>
+<li class="chapter" data-level="2.4" data-path="interactive.html"><a href="interactive.html#states-ggplot2"><i class="fa fa-check"></i><b>2.4</b> States: ggplot2</a></li>
+<li class="chapter" data-level="2.5" data-path="interactive.html"><a href="interactive.html#states-plotly"><i class="fa fa-check"></i><b>2.5</b> States: plotly</a></li>
+<li class="chapter" data-level="2.6" data-path="interactive.html"><a href="interactive.html#states-mapview"><i class="fa fa-check"></i><b>2.6</b> States: mapview</a></li>
+<li class="chapter" data-level="2.7" data-path="interactive.html"><a href="interactive.html#states-leaflet"><i class="fa fa-check"></i><b>2.7</b> States: leaflet</a><ul>
+<li class="chapter" data-level="2.7.1" data-path="interactive.html"><a href="interactive.html#choropleth"><i class="fa fa-check"></i><b>2.7.1</b> Choropleth</a></li>
+<li class="chapter" data-level="2.7.2" data-path="interactive.html"><a href="interactive.html#popups-and-legend"><i class="fa fa-check"></i><b>2.7.2</b> Popups and Legend</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="interactive.html"><a href="interactive.html#pipe-operator-1"><i class="fa fa-check"></i><b>2.8</b> Pipe Operator</a></li>
+<li class="chapter" data-level="2.9" data-path="interactive.html"><a href="interactive.html#challenge-project-states-and-calculate-area-1"><i class="fa fa-check"></i><b>2.9</b> Challenge: Project States and Calculate Area</a><ul>
+<li class="chapter" data-level="2.9.1" data-path="interactive.html"><a href="interactive.html#answers-2"><i class="fa fa-check"></i><b>2.9.1</b> Answers</a></li>
+</ul></li>
+<li class="chapter" data-level="2.10" data-path="interactive.html"><a href="interactive.html#key-points-1"><i class="fa fa-check"></i><b>2.10</b> Key Points</a></li>
+<li class="chapter" data-level="2.11" data-path="interactive.html"><a href="interactive.html#issues-1"><i class="fa fa-check"></i><b>2.11</b> Issues</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
-<li><a href="https://github.com/bbest/R-adv-spatial-lessons" target="blank">Published with bookdown</a></li>
+<li><a href="https://bookdown.org" target="blank">Published with bookdown</a></li>
 
 </ul>
 
@@ -114,60 +190,251 @@
 <div id="overview" class="section level2 objectives">
 <h2><span class="header-section-number">1.1</span> Overview</h2>
 <p><strong>Questions</strong> - How to elegantly conduct complex spatial analysis?</p>
-<p><strong>Objectives</strong> - Understand how to use the “then” operator <code>%&gt;%</code> to pass output from one function into input of the next. - Perform</p>
+<p><strong>Objectives</strong> - Use the <code>%&gt;%</code> operator (aka “then” or “pipe”) to pass output from one function into input of the next. - Calculate metrics on spatial attributes. - Aggregate spatial data with metrics.</p>
 </div>
 <div id="things-youll-need-to-complete-this-tutorial" class="section level2 prereq">
 <h2><span class="header-section-number">1.2</span> Things You’ll Need to Complete this Tutorial</h2>
 <p><strong>R Skill Level</strong>: Intermediate - you’ve got basics of R down.</p>
 <p>You’ll need …</p>
+<p>We will use the <code>sf</code> package for vector data along with the <code>dplyr</code> package for calculating and manipulating attribute data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load packages</span>
+<span class="kw">library</span>(tidyverse)  <span class="co"># dplyr, tidyr, ggplot2</span>
+<span class="kw">library</span>(sf)         <span class="co"># vector reading &amp; analysis</span>
+
+<span class="co"># set working directory to data folder</span>
+<span class="co"># setwd(&quot;pathToDirHere&quot;)</span></code></pre></div>
 </div>
-<div id="challenge-explore-raster-metadata" class="section level2 challenge">
-<h2><span class="header-section-number">1.3</span> Challenge: Explore Raster Metadata</h2>
-<p>Without using the <code>raster</code> function to read the file into <code>R</code>, determine the following about the <code>NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif</code> file:</p>
-<ol style="list-style-type: decimal">
-<li>Does this file has the same <code>CRS</code> as <code>DSM_HARV</code>?</li>
-<li>What is the <code>NoDataValue</code>?</li>
-<li>What is resolution of the raster data?</li>
-<li>How large would a 5x5 pixel area would be on the Earth’s surface?</li>
-<li>Is the file a multi- or single-band raster?</li>
-</ol>
-<p>Notice: this file is a <code>hillshade</code>. We will learn about hillshades in <a href="{{ site.baseurl }}/R/Multi-Band-Rasters-In-R/" target="_blank"> Work with Multi-band Rasters: Images in R</a>.</p>
+<div id="us-states-read-and-plot" class="section level2">
+<h2><span class="header-section-number">1.3</span> US States: Read and Plot</h2>
+<p>Similar to <a href="https://jsta.github.io/R-spatial-raster-vector-lesson/09-vector-when-data-dont-line-up-crs/">Lesson 9: Handling Spatial Projection &amp; CRS in R</a>, we’ll start by reading in a polygon shapefile using the <code>sf</code> package. Then use the default <code>plot()</code> function to see what it looks like.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># read in states</span>
+states &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;data/NEON-DS-Site-Layout-Files/US-Boundary-Layers/US-State-Boundaries-Census-2014.shp&quot;</span>)
+<span class="kw">plot</span>(states)</code></pre></div>
+<pre><code>## Warning: plotting the first 9 out of 10 attributes; use max.plot = 10 to
+## plot all</code></pre>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>You’ll notice that the default plot on <code>sf</code> objects outputs colorized values of the first 9 of 10 columns. Use the suggestion from the warning to plot the 10th column.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot 10th column</span>
+<span class="kw">plot</span>(states, <span class="dt">max.plot =</span> <span class="dv">10</span>)</code></pre></div>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># show columns of the data frame</span>
+<span class="kw">names</span>(states)</code></pre></div>
+<pre><code>##  [1] &quot;STATEFP&quot;  &quot;STATENS&quot;  &quot;AFFGEOID&quot; &quot;GEOID&quot;    &quot;STUSPS&quot;   &quot;NAME&quot;    
+##  [7] &quot;LSAD&quot;     &quot;ALAND&quot;    &quot;AWATER&quot;   &quot;region&quot;   &quot;geometry&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># look at table</span>
+<span class="kw">glimpse</span>(states)</code></pre></div>
+<pre><code>## Observations: 58
+## Variables: 11
+## $ STATEFP  &lt;chr&gt; &quot;06&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;16&quot;, &quot;17&quot;, &quot;19&quot;, &quot;21&quot;, &quot;22&quot;,...
+## $ STATENS  &lt;chr&gt; &quot;01779778&quot;, &quot;01702382&quot;, &quot;00294478&quot;, &quot;01705317&quot;, &quot;0177...
+## $ AFFGEOID &lt;chr&gt; &quot;0400000US06&quot;, &quot;0400000US11&quot;, &quot;0400000US12&quot;, &quot;0400000...
+## $ GEOID    &lt;chr&gt; &quot;06&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;16&quot;, &quot;17&quot;, &quot;19&quot;, &quot;21&quot;, &quot;22&quot;,...
+## $ STUSPS   &lt;chr&gt; &quot;CA&quot;, &quot;DC&quot;, &quot;FL&quot;, &quot;GA&quot;, &quot;ID&quot;, &quot;IL&quot;, &quot;IA&quot;, &quot;KY&quot;, &quot;LA&quot;,...
+## $ NAME     &lt;chr&gt; &quot;California&quot;, &quot;District of Columbia&quot;, &quot;Florida&quot;, &quot;Geo...
+## $ LSAD     &lt;chr&gt; &quot;00&quot;, &quot;00&quot;, &quot;00&quot;, &quot;00&quot;, &quot;00&quot;, &quot;00&quot;, &quot;00&quot;, &quot;00&quot;, &quot;00&quot;,...
+## $ ALAND    &lt;dbl&gt; 403483823181, 158350578, 138903200855, 148963503399, ...
+## $ AWATER   &lt;dbl&gt; 20483271881, 18633500, 31407883551, 4947080103, 23977...
+## $ region   &lt;chr&gt; &quot;West&quot;, &quot;Northeast&quot;, &quot;Southeast&quot;, &quot;Southeast&quot;, &quot;West&quot;...
+## $ geometry &lt;simple_feature&gt; MULTIPOLYGONZ(((-118.593969..., MULTIPOLYG...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># convert to tibble for nicer printing</span>
+<span class="kw">as_tibble</span>(states)</code></pre></div>
+<pre><code>## Simple feature collection with 58 features and 10 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XYZ
+## bbox:           xmin: -124.7258 ymin: 24.49813 xmax: -66.9499 ymax: 49.38436
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+## # A tibble: 58 x 11
+##    STATEFP  STATENS    AFFGEOID GEOID STUSPS                 NAME  LSAD
+##      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;
+##  1      06 01779778 0400000US06    06     CA           California    00
+##  2      11 01702382 0400000US11    11     DC District of Columbia    00
+##  3      12 00294478 0400000US12    12     FL              Florida    00
+##  4      13 01705317 0400000US13    13     GA              Georgia    00
+##  5      16 01779783 0400000US16    16     ID                Idaho    00
+##  6      17 01779784 0400000US17    17     IL             Illinois    00
+##  7      19 01779785 0400000US19    19     IA                 Iowa    00
+##  8      21 01779786 0400000US21    21     KY             Kentucky    00
+##  9      22 01629543 0400000US22    22     LA            Louisiana    00
+## 10      24 01714934 0400000US24    24     MD             Maryland    00
+## # ... with 48 more rows, and 4 more variables: ALAND &lt;dbl&gt;, AWATER &lt;dbl&gt;,
+## #   region &lt;chr&gt;, geometry &lt;simple_feature&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(states)</code></pre></div>
+<pre><code>##  [1] &quot;STATEFP&quot;  &quot;STATENS&quot;  &quot;AFFGEOID&quot; &quot;GEOID&quot;    &quot;STUSPS&quot;   &quot;NAME&quot;    
+##  [7] &quot;LSAD&quot;     &quot;ALAND&quot;    &quot;AWATER&quot;   &quot;region&quot;   &quot;geometry&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># inspect the class(es) of the states object</span>
+<span class="kw">class</span>(states)</code></pre></div>
+<pre><code>## [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>The class of the <code>states</code> object is both a simple feature (<code>sf</code>) as well as a data frame, which means the many useful functions available to a data frame (or “tibble”) can be applied.</p>
+<p>To plot the column of interest, feed the “slice” of that column to the <code>plot()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(states[<span class="st">&#39;region&#39;</span>])</code></pre></div>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><strong>Question</strong>: To motivate the spatial analysis for the rest of this lesson, let’s answer this question: “<em><strong>Show which regions have the highest ratio of water to land?</strong></em>”</p>
+</div>
+<div id="challenge-what-analytical-steps-are-required-to-answer-the-question" class="section level2 challenge">
+<h2><span class="header-section-number">1.4</span> Challenge: What analytical steps are required to answer the question?</h2>
+<p>Outline a sequence of analytical steps needed to arrive at the answer.</p>
 <div id="answers" class="section level3 solution">
-<h3><span class="header-section-number">1.3.1</span> Answers</h3>
-<pre><code>rows        1367 
-columns     1697 
-bands       1 
-lower left origin.x        731453 
-lower left origin.y        4712471 
-res.x       1 
-res.y       1 
-ysign       -1 
-oblique.x   0 
-oblique.y   0 
-driver      GTiff 
-projection  +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs 
-file        data/NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif 
-apparent band summary:
-   GDType hasNoDataValue NoDataValue blockSize1 blockSize2
-1 Float64           TRUE       -9999          1       1697
-apparent band statistics:
-        Bmin      Bmax     Bmean       Bsd
-1 -0.7136298 0.9999997 0.3125525 0.4812939
-Metadata:
-AREA_OR_POINT=Area </code></pre>
+<h3><span class="header-section-number">1.4.1</span> Answers</h3>
 <ol style="list-style-type: decimal">
-<li>If this file has the same CRS as DSM_HARV? Yes: UTM Zone 18, WGS84, meters.</li>
-<li>What format <code>NoDataValues</code> take? -9999</li>
-<li>The resolution of the raster data? 1x1</li>
-<li>How large a 5x5 pixel area would be? 5mx5m How? We are given resolution of 1x1 and units in meters, therefore resolution of 5x5 means 5x5m.</li>
-<li>Is the file a multi- or single-band raster? Single.</li>
+<li><strong>Sum</strong> the area of water and land per region.</li>
+<li><strong>Divide</strong> the area of water by the area of land per region to arrive at density of water.</li>
+<li>Show <strong>table</strong> of regions sorted by density of water.</li>
+<li>Show <strong>map</strong> of regions by density of water with a color ramp and legend.</li>
 </ol>
+</div>
+</div>
+<div id="us-states-analyze-attributes" class="section level2">
+<h2><span class="header-section-number">1.5</span> US States: Analyze Attributes</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regions =<span class="st"> </span>states %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(region) %&gt;%
+<span class="st">  </span><span class="kw">summarize</span>(
+    <span class="dt">water =</span> <span class="kw">sum</span>(AWATER),
+    <span class="dt">land  =</span> <span class="kw">sum</span>(ALAND)) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(
+    <span class="dt">water_land =</span> water /<span class="st"> </span>land)
+
+<span class="co"># object</span>
+regions</code></pre></div>
+<pre><code>## Simple feature collection with 5 features and 4 fields
+## geometry type:  GEOMETRY
+## dimension:      XYZ
+## bbox:           xmin: -124.7258 ymin: 24.49813 xmax: -66.9499 ymax: 49.38436
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+## # A tibble: 5 x 5
+##      region        water         land water_land          geometry
+##       &lt;chr&gt;        &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;  &lt;simple_feature&gt;
+## 1   Midwest 184383393833 1.943869e+12 0.09485380 &lt;MULTIPOLYGON...&gt;
+## 2 Northeast 108922434345 8.690661e+11 0.12533273 &lt;MULTIPOLYGON...&gt;
+## 3 Southeast 103876652998 1.364632e+12 0.07612063 &lt;MULTIPOLYGON...&gt;
+## 4 Southwest  24217682268 1.462632e+12 0.01655761 &lt;POLYGONZ((-9...&gt;
+## 5      West  57568049509 2.432336e+12 0.02366780 &lt;MULTIPOLYGON...&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># table</span>
+regions %&gt;%
+<span class="st">  </span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(water_land))</code></pre></div>
+<pre><code>## # A tibble: 5 x 4
+##      region        water         land water_land
+##       &lt;chr&gt;        &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Northeast 108922434345 8.690661e+11 0.12533273
+## 2   Midwest 184383393833 1.943869e+12 0.09485380
+## 3 Southeast 103876652998 1.364632e+12 0.07612063
+## 4      West  57568049509 2.432336e+12 0.02366780
+## 5 Southwest  24217682268 1.462632e+12 0.01655761</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot, default</span>
+<span class="kw">plot</span>(regions[<span class="st">&#39;water_land&#39;</span>])</code></pre></div>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot, ggplot</span>
+<span class="kw">ggplot</span>(regions) +
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> water_land)) +
+<span class="st">  </span><span class="kw">scale_fill_distiller</span>(<span class="st">&quot;water_land&quot;</span>, <span class="dt">palette =</span> <span class="st">&quot;Spectral&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Ratio of Water to Land for US Regions&quot;</span>)</code></pre></div>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+</div>
+<div id="us-states-recalculate-area" class="section level2">
+<h2><span class="header-section-number">1.6</span> US States: Recalculate Area</h2>
+<p>Because in geographic coordinates, need to either transform to projection and calculate area, or use geodesic calculations.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(geosphere)</code></pre></div>
+<pre><code>## Loading required package: sp</code></pre>
+<pre><code>## Warning: package &#39;sp&#39; was built under R version 3.4.1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(units)</code></pre></div>
+<pre><code>## Warning: package &#39;units&#39; was built under R version 3.4.1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">regions =<span class="st"> </span>states %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(
+    <span class="dt">water_m2 =</span> AWATER %&gt;%<span class="st"> </span><span class="kw">set_units</span>(m^<span class="dv">2</span>),
+    <span class="dt">land_m2  =</span> geometry %&gt;%<span class="st"> </span><span class="kw">st_zm</span>() %&gt;%<span class="st"> </span><span class="kw">st_area</span>()) %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(region) %&gt;%
+<span class="st">  </span><span class="kw">summarize</span>(
+    <span class="dt">water_m2 =</span> <span class="kw">sum</span>(water_m2),
+    <span class="dt">land_m2  =</span> <span class="kw">sum</span>(land_m2)) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(
+    <span class="dt">water_land =</span> water_m2 /<span class="st"> </span>land_m2)
+
+<span class="co"># table</span>
+regions %&gt;%
+<span class="st">  </span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(water_land))</code></pre></div>
+<pre><code>## # A tibble: 5 x 4
+##      region         water_m2          land_m2   water_land
+##       &lt;chr&gt;          &lt;units&gt;          &lt;units&gt;      &lt;units&gt;
+## 1 Northeast 108922434345 m^2 9.117041e+11 m^2 0.11947126 1
+## 2   Midwest 184383393833 m^2 1.987268e+12 m^2 0.09278233 1
+## 3 Southeast 103876652998 m^2 1.427079e+12 m^2 0.07278971 1
+## 4      West  57568049509 m^2 2.467170e+12 m^2 0.02333363 1
+## 5 Southwest  24217682268 m^2 1.483765e+12 m^2 0.01632178 1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot, ggplot</span>
+<span class="kw">ggplot</span>(regions) +
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> <span class="kw">as.numeric</span>(water_land))) +
+<span class="st">  </span><span class="kw">scale_fill_distiller</span>(<span class="st">&quot;water_land&quot;</span>, <span class="dt">palette =</span> <span class="st">&quot;Spectral&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Ratio of Water to Land (geodesic) for US Regions &quot;</span>)</code></pre></div>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="pipe-operator" class="section level2">
+<h2><span class="header-section-number">1.7</span> Pipe Operator</h2>
+<ul>
+<li>Help &gt; Keyboard Shortcuts Help.</li>
+</ul>
+</div>
+<div id="challenge-project-states-and-calculate-area" class="section level2 challenge">
+<h2><span class="header-section-number">1.8</span> Challenge: Project States and Calculate Area</h2>
+<p>Use <code>st_transform()</code> <a href="http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/">USA Contiguous Albers Equal Area Conic: ESRI Projection – Spatial Reference</a>.</p>
+<div id="answers-1" class="section level3 solution">
+<h3><span class="header-section-number">1.8.1</span> Answers</h3>
+<ul>
+<li>ESRI:102003</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(geosphere)
+<span class="kw">library</span>(units)
+
+<span class="co"># Proj4 of http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/</span>
+crs_usa =<span class="st"> &#39;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&#39;</span>
+
+regions =<span class="st"> </span>states %&gt;%
+<span class="st">  </span><span class="kw">st_transform</span>(crs_usa) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(
+    <span class="dt">water_m2 =</span> AWATER %&gt;%<span class="st"> </span><span class="kw">set_units</span>(m^<span class="dv">2</span>),
+    <span class="dt">land_m2  =</span> geometry %&gt;%<span class="st"> </span><span class="kw">st_zm</span>() %&gt;%<span class="st"> </span><span class="kw">st_area</span>()) %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(region) %&gt;%
+<span class="st">  </span><span class="kw">summarize</span>(
+    <span class="dt">water_m2 =</span> <span class="kw">sum</span>(water_m2),
+    <span class="dt">land_m2  =</span> <span class="kw">sum</span>(land_m2)) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(
+    <span class="dt">water_land =</span> water_m2 /<span class="st"> </span>land_m2)
+
+<span class="co"># table</span>
+regions %&gt;%
+<span class="st">  </span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>) %&gt;%
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(water_land))</code></pre></div>
+<pre><code>## # A tibble: 5 x 4
+##      region         water_m2          land_m2   water_land
+##       &lt;chr&gt;          &lt;units&gt;          &lt;units&gt;      &lt;units&gt;
+## 1 Northeast 108922434345 m^2 9.117031e+11 m^2 0.11947138 1
+## 2   Midwest 184383393833 m^2 1.987266e+12 m^2 0.09278246 1
+## 3 Southeast 103876652998 m^2 1.427078e+12 m^2 0.07278973 1
+## 4      West  57568049509 m^2 2.467167e+12 m^2 0.02333367 1
+## 5 Southwest  24217682268 m^2 1.483758e+12 m^2 0.01632185 1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot, ggplot</span>
+<span class="kw">ggplot</span>(regions) +
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> <span class="kw">as.numeric</span>(water_land))) +
+<span class="st">  </span><span class="kw">scale_fill_distiller</span>(<span class="st">&quot;water_land&quot;</span>, <span class="dt">palette =</span> <span class="st">&quot;Spectral&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Ratio of Water to Land (geodesic) for US Regions &quot;</span>)</code></pre></div>
+<p><img src="R-adv-spatial_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 </div>
 <div id="key-points" class="section level2 keypoints">
-<h2><span class="header-section-number">1.4</span> Key Points</h2>
+<h2><span class="header-section-number">1.9</span> Key Points</h2>
 <ul>
-<li>The Coordinate Reference System or CRS tells R where the raster is located in geographic space and what method should be used to “flatten” or project the raster.</li>
+<li>Area can be calculated a variety of ways. Geodesic is preferred if starting with geographic coordinates (vs projected).</li>
+</ul>
+</div>
+<div id="issues" class="section level2">
+<h2><span class="header-section-number">1.10</span> Issues</h2>
+<ul>
+<li><code>sf::st_is_valid()</code></li>
 </ul>
 
 </div>
@@ -181,7 +448,7 @@ AREA_OR_POINT=Area </code></pre>
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="literature.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="interactive.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

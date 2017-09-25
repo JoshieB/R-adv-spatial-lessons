@@ -1,8 +1,3 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 # Tidy Spatial Analysis {#tidy}
 
 Resources:
@@ -15,9 +10,9 @@ Resources:
 - How to elegantly conduct complex spatial analysis?
 
 **Objectives**
-- Understand how to use the "then" operator `%>%` to pass output from one function into input of the next.
-- Perform 
-
+- Use the `%>%` operator (aka "then" or "pipe") to pass output from one function into input of the next.
+- Calculate metrics on spatial attributes.
+- Aggregate spatial data with metrics.
 
 ## Things You'll Need to Complete this Tutorial {.prereq}
 
@@ -25,57 +20,186 @@ Resources:
 
 You'll need ...
 
+We will use the `sf` package for vector data along with the `dplyr` package for calculating and manipulating attribute data.
 
-## Challenge: Explore Raster Metadata {.challenge}
+```{r , message=F, warning=F}
+# load packages
+library(tidyverse)  # dplyr, tidyr, ggplot2
+library(sf)         # vector reading & analysis
 
-Without using the `raster` function to read the file into `R`, determine the following about the  `NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif` file:
- 
-1. Does this file has the same `CRS` as `DSM_HARV`?
-2. What is the `NoDataValue`?
-3. What is resolution of the raster data?
-4. How large would a 5x5 pixel area would be on the Earth's surface?
-5. Is the file a multi- or single-band raster?
+# set working directory to data folder
+# setwd("pathToDirHere")
+```
 
-Notice: this file is a `hillshade`. We will learn about hillshades in
-<a href="{{ site.baseurl }}/R/Multi-Band-Rasters-In-R/" target="_blank">  Work with Multi-band Rasters: Images in R</a>.
+## US States: Read and Plot
+
+Similar to [Lesson 9: Handling Spatial Projection & CRS in R](https://jsta.github.io/R-spatial-raster-vector-lesson/09-vector-when-data-dont-line-up-crs/), we'll start by reading in a polygon shapefile using the `sf` package. Then use the default `plot()` function to see what it looks like.
+
+```{r}
+# read in states
+states <- read_sf("data/NEON-DS-Site-Layout-Files/US-Boundary-Layers/US-State-Boundaries-Census-2014.shp")
+plot(states)
+```
+
+You'll notice that the default plot on `sf` objects outputs colorized values of the first 9 of 10 columns. Use the suggestion from the warning to plot the 10th column.
+
+```{r}
+# plot 10th column
+plot(states, max.plot = 10)
+
+# show columns of the data frame
+names(states)
+
+# look at table
+glimpse(states)
+
+# convert to tibble for nicer printing
+as_tibble(states)
+
+names(states)
+
+# inspect the class(es) of the states object
+class(states)
+```
+
+The class of the `states` object is both a simple feature (`sf`) as well as a data frame, which means the many useful functions available to a data frame (or "tibble") can be applied.
+
+To plot the column of interest, feed the "slice" of that column to the `plot()` function.
+
+```{r}
+plot(states['region'])
+```
+
+**Question**: To motivate the spatial analysis for the rest of this lesson, let's answer this question: "_**Show which regions have the highest ratio of water to land?**_"
+
+## Challenge: What analytical steps are required to answer the question? {.challenge}
+
+Outline a sequence of analytical steps needed to arrive at the answer.
 
 ### Answers {.solution} 
 
-```
-rows        1367 
-columns     1697 
-bands       1 
-lower left origin.x        731453 
-lower left origin.y        4712471 
-res.x       1 
-res.y       1 
-ysign       -1 
-oblique.x   0 
-oblique.y   0 
-driver      GTiff 
-projection  +proj=utm +zone=18 +datum=WGS84 +units=m +no_defs 
-file        data/NEON-DS-Airborne-Remote-Sensing/HARV/DSM/HARV_DSMhill.tif 
-apparent band summary:
-   GDType hasNoDataValue NoDataValue blockSize1 blockSize2
-1 Float64           TRUE       -9999          1       1697
-apparent band statistics:
-        Bmin      Bmax     Bmean       Bsd
-1 -0.7136298 0.9999997 0.3125525 0.4812939
-Metadata:
-AREA_OR_POINT=Area 
+1. **Sum** the area of water and land per region.
+1. **Divide** the area of water by the area of land per region to arrive at density of water.
+1. Show **table** of regions sorted by density of water.
+1. Show **map** of regions by density of water with a color ramp and legend.
+
+## US States: Analyze Attributes
+
+```{r}
+regions = states %>%
+  group_by(region) %>%
+  summarize(
+    water = sum(AWATER),
+    land  = sum(ALAND)) %>%
+  mutate(
+    water_land = water / land)
+
+# object
+regions
+
+# table
+regions %>%
+  st_set_geometry(NULL) %>%
+  arrange(desc(water_land))
+
+# plot, default
+plot(regions['water_land'])
+
+# plot, ggplot
+ggplot(regions) +
+  geom_sf(aes(fill = water_land)) +
+  scale_fill_distiller("water_land", palette = "Spectral") +
+  theme_bw() +
+  ggtitle("Ratio of Water to Land for US Regions")
 ```
 
-1. If this file has the same CRS as DSM_HARV?  Yes: UTM Zone 18, WGS84, meters.
-2. What format `NoDataValues` take?  -9999
-3. The resolution of the raster data? 1x1
-4. How large a 5x5 pixel area would be? 5mx5m How? We are given resolution of 1x1 and units in meters, therefore resolution of 5x5 means 5x5m.
-5. Is the file a multi- or single-band raster?  Single.
+## US States: Recalculate Area
+
+Because in geographic coordinates, need to either transform to projection and calculate area, or use geodesic calculations.
+
+```{r}
+library(geosphere)
+library(units)
+
+regions = states %>%
+  mutate(
+    water_m2 = AWATER %>% set_units(m^2),
+    land_m2  = geometry %>% st_zm() %>% st_area()) %>%
+  group_by(region) %>%
+  summarize(
+    water_m2 = sum(water_m2),
+    land_m2  = sum(land_m2)) %>%
+  mutate(
+    water_land = water_m2 / land_m2)
+
+# table
+regions %>%
+  st_set_geometry(NULL) %>%
+  arrange(desc(water_land))
+
+# plot, ggplot
+ggplot(regions) +
+  geom_sf(aes(fill = as.numeric(water_land))) +
+  scale_fill_distiller("water_land", palette = "Spectral") +
+  theme_bw() +
+  ggtitle("Ratio of Water to Land (geodesic) for US Regions ")
+```
+
+## Pipe Operator
+
+- Help > Keyboard Shortcuts Help. 
+
+
+## Challenge: Project States and Calculate Area {.challenge}
+
+Use `st_transform()` [USA Contiguous Albers Equal Area Conic: ESRI Projection -- Spatial Reference](http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/).
+
+### Answers {.solution} 
+
+- ESRI:102003
+
+```{r}
+library(geosphere)
+library(units)
+
+# Proj4 of http://spatialreference.org/ref/esri/usa-contiguous-albers-equal-area-conic/
+crs_usa = '+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'
+
+regions = states %>%
+  st_transform(crs_usa) %>%
+  mutate(
+    water_m2 = AWATER %>% set_units(m^2),
+    land_m2  = geometry %>% st_zm() %>% st_area()) %>%
+  group_by(region) %>%
+  summarize(
+    water_m2 = sum(water_m2),
+    land_m2  = sum(land_m2)) %>%
+  mutate(
+    water_land = water_m2 / land_m2)
+
+# table
+regions %>%
+  st_set_geometry(NULL) %>%
+  arrange(desc(water_land))
+
+# plot, ggplot
+ggplot(regions) +
+  geom_sf(aes(fill = as.numeric(water_land))) +
+  scale_fill_distiller("water_land", palette = "Spectral") +
+  theme_bw() +
+  ggtitle("Ratio of Water to Land (geodesic) for US Regions ")
+```
 
 ## Key Points {.keypoints}
-
-- The Coordinate Reference System or CRS tells R where the raster is located in geographic space and what method should be used to “flatten” or project the raster.
-
+- Area can be calculated a variety of ways. Geodesic is preferred if starting with geographic coordinates (vs projected).
 
 
 
+## Issues
+
+```{r}
+
+```
+
+- `sf::st_is_valid()`
 

@@ -10,7 +10,7 @@ bookdown::gitbook:
       before: |
         <li><a href="./">R Advanced Spatial Lessons</a></li>
       after: |
-        <li><a href="https://github.com/bbest/R-adv-spatial-lessons" target="blank">Published with bookdown</a></li>
+        <li><a href="https://bookdown.org" target="blank">Published with bookdown</a></li>
     edit: https://github.com/bbest/R-adv-spatial-lessons/edit/master/%s
     download: ["pdf"]
 bookdown::pdf_book:
