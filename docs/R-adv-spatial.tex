@@ -122,7 +122,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-09-24}
+  \date{2017-09-27}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -168,6 +168,255 @@ This content is setup for now using
 \href{https://github.com/rstudio/bookdown-demo}{bookdown-demo}) for
 expediency, and meant to eventually be folded into the
 \href{https://github.com/swcarpentry/styles}{Software Carpentry style}.
+
+\chapter*{Setup}\label{setup}
+\addcontentsline{toc}{chapter}{Setup}
+
+\section{Install software}\label{install-software}
+
+This workshop will require the following software installed on your
+machine:
+
+\begin{itemize}
+\tightlist
+\item
+  \href{http://cran.cnr.berkeley.edu/}{R}
+\item
+  \href{https://www.rstudio.com/products/rstudio/download/\#download}{RStudio}
+\end{itemize}
+
+Please download the appropriate stable release for your operating
+system.
+
+\section{Launch RStudio}\label{launch-rstudio}
+
+RStudio is an integrated development environment (IDE) for editing text
+in the code editor, running commands in the R console, viewing defined
+objects in the workspace and past commands in the history, and viewing
+plots, files and help. Here's a layout of the panes in RStudio, each of
+which can have several tabs for alternate functionality:
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{figs/rstudio.png}
+\caption{}
+\end{figure}
+
+Check out the Help \textgreater{} Cheatsheets \textgreater{}
+\href{https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf}{RStudio
+IDE Cheat Sheet}.
+
+\section{Create RStudio project}\label{create-rstudio-project}
+
+In RStudio, please create an RStudio project (File \textgreater{} New
+Project\ldots{} \textgreater{} New Directory \textgreater{} Empty
+Project) to organize your code and data for this workshop into a single
+folder. Feel free to organize this folder wherever makes sense on your
+laptop. Here's what I'm using:
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{figs/rstudio-new-project.png}
+\caption{}
+\end{figure}
+
+\subsection{Create relative path to data
+folder}\label{create-relative-path-to-data-folder}
+
+In order to work through a common set of code and access data files in a
+consistent manner, getting properly situated with paths will save many
+headaches. Paths can be referenced as an ``absolute'' path starting with
+your drive letter (eg ``C:'' on Windows or ``/Users'' on Mac). Absolute
+paths are specific to platform (Windows / Linux / Mac) and not portable
+for use on other machines or other users wishing to organize content
+anywhere else. A ``relative'' path, meaning relative to your current
+working directory, is portable. Try these commands in the console of
+RStudio:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# get working directory}
+\KeywordTok{getwd}\NormalTok{()}
+
+\CommentTok{# list files in working directory}
+\KeywordTok{list.files}\NormalTok{(}\StringTok{'.'}\NormalTok{)}
+
+\CommentTok{# list files one directory up}
+\KeywordTok{list.files}\NormalTok{(}\StringTok{'..'}\NormalTok{)}
+
+\CommentTok{# create a directory}
+\KeywordTok{dir.create}\NormalTok{(}\StringTok{'data'}\NormalTok{)}
+
+\CommentTok{# set working directory}
+\KeywordTok{setwd}\NormalTok{(}\StringTok{'data'}\NormalTok{)}
+\KeywordTok{setwd}\NormalTok{(}\StringTok{'..'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+So you discovered the absolute path to your current working directory,
+and list files in the current directory (\texttt{.}) or one directory up
+(\texttt{..}). Then you created the ``data'' directory and set the
+working directory to be inside of it, then back out of it.
+
+The main reason we created the RStudio project file (filename ends in
+\texttt{.Rproj}) is to have the same working directory every time you
+return to this project by double-clicking the \texttt{*.Rproj} file in
+your file explorer. So paths defined in the code of files there can be
+based on that same working driectory and consistently work, even if you
+zip them up and send to a colleague who places them on an arbitrary
+location on their computer.
+
+\section{Download data}\label{download-data}
+
+Please download the following zip files into your newly created ``data''
+folder from above.
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://ndownloader.figshare.com/files/3708751}{Site layout
+  shapefiles}
+\item
+  \href{https://ndownloader.figshare.com/files/3701578}{Airborne remote
+  sensing data}
+\item
+  \href{https://ndownloader.figshare.com/files/4933582}{Landsat NDVI
+  raster data}
+\item
+  \href{https://ndownloader.figshare.com/files/3701572}{Meteorological
+  data}
+\end{itemize}
+
+Then unzip. You should see the following when listing files (and
+directories) in the data directory.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{list.files}\NormalTok{(}\StringTok{'data'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "NEON-DS-Airborne-Remote-Sensing" "NEON-DS-Landsat-NDVI"           
+## [3] "NEON-DS-Met-Time-Series"         "NEON-DS-Site-Layout-Files"      
+## [5] "NEONDSAirborneRemoteSensing.zip" "NEONDSLandsatNDVI.zip"          
+## [7] "NEONDSMetTimeSeries.zip"         "NEONDSSiteLayoutFiles.zip"      
+## [9] "states.geojson"
+\end{verbatim}
+
+\section{Install R Packages}\label{install-r-packages}
+
+Here's a bit of code to install packages that we'll use throughout the
+workshop. Please copy and paste this code into your console.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# concatenate a vector of package names to install}
+\NormalTok{packages =}\StringTok{ }\KeywordTok{c}\NormalTok{(}
+  \CommentTok{# general data science}
+  \StringTok{'tidyverse'}\NormalTok{,}
+  \CommentTok{# dynamic document creation}
+  \StringTok{'knitr'}\NormalTok{,}\StringTok{'rmarkdown'}\NormalTok{,}
+  \CommentTok{# handle spatial data}
+  \StringTok{'rgdal'}\NormalTok{,}\StringTok{'raster'}\NormalTok{,}\StringTok{'sp'}\NormalTok{,}\StringTok{'sf'}\NormalTok{,}\StringTok{'geojsonio'}\NormalTok{,}
+  \CommentTok{# spatial data}
+  \StringTok{'maps'}\NormalTok{,}
+  \CommentTok{# spatial analysis}
+  \StringTok{'rgeos'}\NormalTok{,}\StringTok{'geosphere'}\NormalTok{,}
+  \CommentTok{# static plotting & mapping}
+  \StringTok{'RColorBrewer'}\NormalTok{,}\StringTok{'ggplot2'}\NormalTok{,}\StringTok{'rasterVis'}\NormalTok{,}
+  \CommentTok{# interactive plotting & mapping}
+  \StringTok{'plotly'}\NormalTok{,}\StringTok{'leaflet'}\NormalTok{,}\StringTok{'mapview'}\NormalTok{,}\StringTok{'mapedit'}\NormalTok{)}
+
+\CommentTok{# loop through packages}
+\NormalTok{for (p in packages)\{}
+  
+  \CommentTok{# if package not installed}
+  \NormalTok{if (!}\KeywordTok{require}\NormalTok{(p, }\DataTypeTok{character.only=}\NormalTok{T))\{}
+    
+    \CommentTok{# install package}
+    \KeywordTok{install.packages}\NormalTok{(p)}
+  \NormalTok{\}}
+  
+  \CommentTok{# load package}
+  \KeywordTok{library}\NormalTok{(p, }\DataTypeTok{character.only=}\NormalTok{T)}
+\NormalTok{\}}
+
+\CommentTok{# report on versions of software & packages}
+\KeywordTok{sessionInfo}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## R version 3.4.0 (2017-04-21)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: OS X El Capitan 10.11.6
+## 
+## Matrix products: default
+## BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] mapedit_0.3.2       rasterVis_0.41      latticeExtra_0.6-28
+##  [4] lattice_0.20-35     RColorBrewer_1.1-2  rgeos_0.3-25       
+##  [7] maps_3.2.0          geojsonio_0.4.2     rgdal_1.2-11       
+## [10] rmarkdown_1.6       knitr_1.17          scales_0.5.0       
+## [13] htmltools_0.3.6     mapview_2.1.4       leaflet_1.1.0.9000 
+## [16] plotly_4.7.1        raster_2.5-8        units_0.4-6        
+## [19] geosphere_1.5-5     sp_1.2-5            bindrcpp_0.2       
+## [22] sf_0.5-4            dplyr_0.7.3         purrr_0.2.3        
+## [25] readr_1.1.1         tidyr_0.7.1         tibble_1.3.4       
+## [28] ggplot2_2.2.1.9000  tidyverse_1.1.1    
+## 
+## loaded via a namespace (and not attached):
+##  [1] nlme_3.1-131      satellite_1.0.0   lubridate_1.6.0  
+##  [4] webshot_0.4.1     httr_1.3.1        rprojroot_1.2    
+##  [7] tools_3.4.0       backports_1.1.0   R6_2.2.2         
+## [10] DBI_0.7           lazyeval_0.2.0    colorspace_1.3-2 
+## [13] mnormt_1.5-5      curl_2.8.1        compiler_3.4.0   
+## [16] rvest_0.3.2       xml2_1.1.1        bookdown_0.5     
+## [19] hexbin_1.27.1     psych_1.7.8       stringr_1.2.0    
+## [22] digest_0.6.12     foreign_0.8-69    R.utils_2.5.0    
+## [25] vembedr_0.1.3     base64enc_0.1-3   pkgconfig_2.0.1  
+## [28] htmlwidgets_0.9   rlang_0.1.2       readxl_1.0.0     
+## [31] rstudioapi_0.7    shiny_1.0.5       bindr_0.1        
+## [34] zoo_1.8-0         jsonlite_1.5      crosstalk_1.0.0  
+## [37] R.oo_1.21.0       magrittr_1.5      Rcpp_0.12.12     
+## [40] munsell_0.4.3     R.methodsS3_1.7.1 stringi_1.1.5    
+## [43] yaml_2.1.14       plyr_1.8.4        grid_3.4.0       
+## [46] maptools_0.9-2    parallel_3.4.0    forcats_0.2.0    
+## [49] udunits2_0.13     haven_1.1.0       hms_0.3          
+## [52] gdalUtils_2.0.1.7 reshape2_1.4.2    codetools_0.2-15 
+## [55] stats4_3.4.0      glue_1.1.1        evaluate_0.10.1  
+## [58] V8_1.5            data.table_1.10.4 modelr_0.1.1     
+## [61] png_0.1-7         httpuv_1.3.5      foreach_1.4.3    
+## [64] cellranger_1.1.0  gtable_0.2.0      assertthat_0.2.0 
+## [67] mime_0.5          xtable_1.8-2      broom_0.4.2      
+## [70] viridisLite_0.2.0 iterators_1.0.8
+\end{verbatim}
+
+\section{Create Rmarkdown file}\label{create-rmarkdown-file}
+
+Rmarkdown is a dynamic document format that allows you to knit chunks of
+R code with formatted text (aka markdown). We recommend that you use
+this format for keeping a reproducible research document as you work
+through the lessons To get started, File \textgreater{} New File
+\textgreater{} Rmarkdown\ldots{} and go with default HTML document and
+give any title you like (default ``Untitled'' or ``test'' or ``First
+Rmd'' is fine).
+
+Check out the Help \textgreater{} Markdown Quick Reference and Help
+\textgreater{} Cheatsheets \textgreater{}
+\href{https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf}{R
+Markdown Cheat Sheet}.
+
+Here's a 1 minute video on the awesomeness of Rmarkdown:
 
 \chapter{Tidy Spatial Analysis}\label{tidy}
 
@@ -949,6 +1198,9 @@ TODO: show raster overlay using NEON raster dataset example
   maps, legends, etc.
 \end{itemize}
 
+\chapter*{References}\label{references}
+\addcontentsline{toc}{chapter}{References}
+
 \textbf{Tidy Spatial Analysis}
 
 \begin{itemize}
@@ -956,6 +1208,9 @@ TODO: show raster overlay using NEON raster dataset example
 \item
   \href{http://strimas.com/r/tidy-sf/}{Tidy spatial data in R: using
   dplyr, tidyr, and ggplot2 with sf}
+\item
+  \href{https://www.rstudio.com/resources/cheatsheets/}{Cheatsheets --
+  RStudio}
 \end{itemize}
 
 \textbf{Interactive Maps}
