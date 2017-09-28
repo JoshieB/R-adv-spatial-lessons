@@ -1,5 +1,28 @@
 # References {-}
 
+
+**Spatial Analysis in R books**
+
+* [Geocomputation with R - robinlovelace.net/geocompr](http://robinlovelace.net/geocompr/)
+* [Spatial Data Analysis and Modeling with R — rspatial.org](http://www.rspatial.org/)
+* [Geospatial Analysis 5th Edition, 2015 - spatialanalysisonline.com](http://www.spatialanalysisonline.com/HTML/index.html)
+
+**Spatial Analysis in R blogs**
+
+* [CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)
+* [R spatial projects](http://rspatial.r-forge.r-project.org/)
+* [R sp graphics example figures](http://rspatial.r-forge.r-project.org/gallery/)
+* [Maps and Data Visualisations with R – spatial.ly](http://spatial.ly/r/)
+
+**Spatial Analysis in R courses**
+
+* [Spatial Analysis in R - datacamp.com](https://www.datacamp.com/courses/working-with-geospatial-data-in-r)
+* [An Introduction to Spatial Data Analysis and Visualisation in R - CDRC Data](https://data.cdrc.ac.uk/tutorial/an-introduction-to-spatial-data-analysis-and-visualisation-in-r)
+* [Introduction to Mapping and Spatial Analysis with R - cengel.github.io/rspatial](https://cengel.github.io/rspatial/)
+* [GEOG 4/595: Geographic Data Analysis - geog.uoregon.edu](http://geog.uoregon.edu/bartlein/courses/geog495/index.html)
+* [Geospatial Data in R and Beyond - maths.lancs.ac.uk](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/index.html)
+    * [R Spatial Cheatsheet](http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html)
+
 **Tidy Spatial Analysis**
 
 - [Tidy spatial data in R: using dplyr, tidyr, and ggplot2 with sf](http://strimas.com/r/tidy-sf/)
